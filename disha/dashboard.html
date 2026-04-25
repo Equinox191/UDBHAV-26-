@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Your personal progress journal. Track streaks, quiz scores and milestones in one honest dashboard." />
+<meta property="og:title" content="Progress · Aarambh" />
+<meta property="og:description" content="Aarambh Progress Dashboard — stay accountable with streaks, scores and your full learning history." />
+<meta property="og:type" content="website" />
+
+<title>Dashboard · Aarambh</title>
+<link rel="stylesheet" href="../css/shared.css">
+<link rel="stylesheet" href="../css/dashboard.css">
+
+<style>
+/* ── Interactive enhancements ── */
+
+.kpi .value { transition: color 0.3s; }
+.kpi:hover .value { color: var(--marg); }
+.kpi {
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: default;
+}
+.kpi:hover {
+  box-shadow: 0 4px 24px hsl(220 30% 14% / 0.10);
+  transform: translateY(-2px);
+}
+
+/* Skill bar animation */
+.bar > div {
+  width: 0% !important;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#skills-list.bars-animated .bar > div {
+  width: var(--target-width) !important;
+}
+
+/* Empty-state muted values */
+.value.empty { color: var(--muted-fg); }
+.trend.empty { color: var(--muted-fg); }
+
+/* Backend hook banner */
+.backend-notice {
+  display: flex; align-items: center; gap: 10px;
+  background: color-mix(in srgb, var(--marg) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--marg) 30%, transparent);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--marg);
+  margin-bottom: 28px;
+  letter-spacing: 0.04em;
+}
+.backend-notice .dot-pulse {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--marg); flex-shrink: 0;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* Tooltips */
+.svg-tooltip, .heat-tip {
+  pointer-events: none;
+  position: absolute;
+  background: var(--fg);
+  color: var(--bg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+  transform: translate(-50%, -130%);
+}
+.svg-tooltip.visible, .heat-tip.visible { opacity: 1; }
+
+/* Chart SVG wrap for tooltip positioning */
+.chart-svg-wrap { position: relative; }
+.heatmap-wrap { position: relative; }
+
+/* Heatmap cell hover */
+.heatmap div {
+  cursor: pointer;
+  transition: transform 0.1s, outline 0.1s;
+}
+.heatmap div:hover { transform: scale(1.25); outline: 2px solid var(--marg); outline-offset: 1px; }
+
+/* Skill row */
+.sk-row { cursor: default; }
+.sk-row:hover .sk-pct { color: var(--marg); }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-mark">A</div>
+        <div class="logo-text">
+          <span class="name">Aarambh</span>
+          <span class="sub">tech · field guide</span>
+        </div>
+      </div>
+<nav class="sidebar-nav">
+<div class="nav-section core">
+<div class="nav-section-title"><span class="dot"></span>Overview</div>
+              <a class="nav-link " href="../index.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+                <span>Home</span>
+              </a>
+</div>
+<div class="nav-section marg">
+<div class="nav-section-title"><span class="dot"></span>Marg · Learn</div>
+              <a class="nav-link " href="../marg/tutor.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4M5 12H2m20 0h-3M8 8h8a4 4 0 014 4v6H4v-6a4 4 0 014-4z"/></svg>
+                <span>AI Tutor</span>
+              </a>
+              <a class="nav-link " href="../marg/quiz.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8M4 12a8 8 0 1016 0 8 8 0 00-16 0z"/></svg>
+                <span>Coding Quiz</span>
+              </a>
+              <a class="nav-link " href="../marg/weakness.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg>
+                <span>Weak Areas</span>
+              </a>
+              <a class="nav-link " href="../marg/practice.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6m8 14h8"/></svg>
+                <span>Practice</span>
+              </a>
+</div>
+<div class="nav-section gyan">
+<div class="nav-section-title"><span class="dot"></span>Gyan Sagar · Resources</div>
+              <a class="nav-link " href="../gyan/hub.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <span>Resource Hub</span>
+              </a>
+              <a class="nav-link " href="../gyan/router.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                <span>Smart Router</span>
+              </a>
+              <a class="nav-link " href="../gyan/snippets.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+                <span>Notes & Snippets</span>
+              </a>
+</div>
+<div class="nav-section disha">
+<div class="nav-section-title"><span class="dot"></span>Disha · Career</div>
+              <a class="nav-link " href="../disha/career.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg>
+                <span>Career Suggest</span>
+              </a>
+              <a class="nav-link " href="../disha/path.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                <span>Learning Path</span>
+              </a>
+              <a class="nav-link active" href="../disha/dashboard.html">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg>
+                <span>Progress</span>
+              </a>
+</div>
+</nav>
+      <div class="sidebar-footer">
+        <div class="streak-card">
+          <div class="streak-label"><span>Current streak</span></div>
+          <div class="streak-value"><span id="streak-value">0</span> <span>days</span></div>
+        </div>
+      </div>
+    </aside>
+
+  <div class="main">
+    <div id="sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:4;transition:opacity 0.2s"></div>
+    <div class="mobile-bar">
+      <strong style="font-family:'Fraunces',serif">Aarambh</strong>
+      <button aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">☰ Menu</button>
+    </div>
+
+<div class="page-wrap">
+  <div class="step-label"></div>
+  <h1 class="page-title">Your <em class="disha">progress</em></h1>
+  <p class="page-subtitle">The honest mirror. Stats, streaks, skills, growth — all in one place.</p>
+
+  <!-- ── Backend hook notice ── -->
+  <div class="backend-notice">
+    <div class="dot-pulse"></div>
+    Awaiting live data — call <code style="font-size:10px;opacity:0.85">loadDashboard(data)</code> or set <code style="font-size:10px;opacity:0.85">window.AarambhData</code> before page load
+  </div>
+
+  <!-- ── KPI Cards ── -->
+  <div class="kpis">
+    <div class="kpi">
+      <span class="icon" style="color:var(--marg)">🎯</span>
+      <div class="label">Accuracy</div>
+      <div class="value empty" id="kpi-accuracy">0%</div>
+      <div class="sub" id="kpi-accuracy-sub">no data yet</div>
+    </div>
+    <div class="kpi">
+      <span class="icon" style="color:var(--gyan)">🧠</span>
+      <div class="label">Skills mastered</div>
+      <div class="value empty" id="kpi-skills">0</div>
+      <div class="sub" id="kpi-skills-sub">of 0 tracked</div>
+    </div>
+    <div class="kpi">
+      <span class="icon" style="color:var(--warning)">🔥</span>
+      <div class="label">Daily streak</div>
+      <div class="value empty" id="kpi-streak">0</div>
+      <div class="sub" id="kpi-streak-sub">personal best 0</div>
+    </div>
+    <div class="kpi">
+      <span class="icon" style="color:var(--disha)">🏆</span>
+      <div class="label">Rank</div>
+      <div class="value empty" id="kpi-rank">—</div>
+      <div class="sub" id="kpi-rank-sub">out of 0</div>
+    </div>
+  </div>
+
+  <!-- ── Charts ── -->
+  <div class="charts">
+
+    <!-- Growth line chart -->
+    <div class="chart">
+      <div class="chart-head">
+        <div>
+          <div class="mono-label">growth</div>
+          <div class="title">Last 12 weeks</div>
+        </div>
+        <div class="trend empty" id="growth-trend">↗ —</div>
+      </div>
+      <div class="chart-svg-wrap" id="growth-wrap">
+        <svg id="growth-svg" viewBox="0 0 600 200" style="width:100%;height:192px">
+          <defs>
+            <linearGradient id="growthFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="hsl(340 55% 38%)" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="hsl(340 55% 38%)" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="growthLine" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="hsl(200 50% 30%)"/>
+              <stop offset="100%" stop-color="hsl(340 55% 38%)"/>
+            </linearGradient>
+          </defs>
+          <!-- Flat baseline (empty state) -->
+          <path id="growth-fill" d="M10,190 L590,190 L590,190 L10,190 Z" fill="url(#growthFill)"/>
+          <path id="growth-line" d="M10,190 L590,190" fill="none" stroke="url(#growthLine)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <g id="growth-dots"></g>
+          <text id="growth-empty-label" x="300" y="105" text-anchor="middle"
+            font-family="JetBrains Mono, monospace" font-size="11"
+            fill="hsl(220 12% 40%)" opacity="0.7">No growth data yet</text>
+        </svg>
+        <div class="svg-tooltip" id="growth-tooltip"></div>
+      </div>
+    </div>
+
+    <!-- Skills mastery bars -->
+    <div class="chart">
+      <div class="mono-label">skills</div>
+      <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin:4px 0 20px">Mastery</div>
+      <div class="skills-list" id="skills-list">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted-fg);text-align:center;padding:24px 0">
+          No skills tracked yet
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Heatmap ── -->
+  <div class="heatmap-card">
+    <div class="chart-head">
+      <div>
+        <div class="mono-label">activity</div>
+        <div class="title" style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-top:4px">Daily streak heatmap</div>
+      </div>
+      <div style="color:var(--warning);font-family:'JetBrains Mono',monospace;font-size:14px" id="heatmap-streak-label">🔥 0 day streak</div>
+    </div>
+    <div class="heatmap-wrap">
+      <div class="heatmap" id="heatmap"></div>
+      <div class="heat-tip" id="heat-tip"></div>
+    </div>
+    <div class="heatmap-legend">
+      less
+      <div class="swatch">
+        <div style="background:white;border:1px solid var(--border)"></div>
+        <div style="background:hsl(200 50% 30% / 0.3)"></div>
+        <div style="background:hsl(200 50% 30% / 0.6)"></div>
+        <div style="background:var(--marg)"></div>
+      </div>
+      more
+    </div>
+  </div>
+
+</div>
+  </div><!-- /.main -->
+</div><!-- /.app -->
+
+<script src="../js/shared.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   AARAMBH DASHBOARD — Interactive layer
+   
+   ┌─────────────────────────────────────────────────────────────┐
+   │  BACKEND INTEGRATION                                        │
+   │                                                             │
+   │  Option A — call after your fetch resolves:                 │
+   │    loadDashboard(data)                                      │
+   │                                                             │
+   │  Option B — set before page load (SSR / preload):           │
+   │    window.AarambhData = data                                │
+   │                                                             │
+   │  data shape:                                                │
+   │  {                                                          │
+   │    accuracy:       number,    // 0-100, e.g. 78             │
+   │    accuracyDelta:  string,    // e.g. "+6% this week"       │
+   │    skillsMastered: number,    // e.g. 14                    │
+   │    skillsTotal:    number,    // e.g. 22                    │
+   │    streak:         number,    // days, e.g. 12              │
+   │    personalBest:   number,    // days, e.g. 18              │
+   │    rank:           number,    // e.g. 247                   │
+   │    totalLearners:  string,    // e.g. "4.2k"                │
+   │    growthWeeks:    number[],  // 12 values, 0-100           │
+   │    growthTrend:    string,    // e.g. "+56%"                │
+   │    skills: [                                                │
+   │      { name: string, pct: number,                          │
+   │        gradient: 'marg'|'gyan'|'disha' }                   │
+   │    ],                                                       │
+   │    heatmap:      number[],   // 140 values, intensity 0-3   │
+   │    heatmapDates: string[],   // 140 ISO date strings        │
+   │  }                                                          │
+   └─────────────────────────────────────────────────────────────┘
+═══════════════════════════════════════════════════════════════════ */
+
+// ── Animated counter ───────────────────────────────────────────────
+function animateCounter(el, target, suffix) {
+  const dur = 900, start = performance.now();
+  (function step(now) {
+    const t = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(target * ease) + (suffix || '');
+    if (t < 1) requestAnimationFrame(step);
+  })(start);
+}
+
+// ── KPI cards ──────────────────────────────────────────────────────
+function renderKPIs(d) {
+  var acc = document.getElementById('kpi-accuracy');
+  acc.classList.remove('empty');
+  animateCounter(acc, d.accuracy, '%');
+  document.getElementById('kpi-accuracy-sub').textContent = d.accuracyDelta || '—';
+
+  var sk = document.getElementById('kpi-skills');
+  sk.classList.remove('empty');
+  animateCounter(sk, d.skillsMastered, '');
+  document.getElementById('kpi-skills-sub').textContent = 'of ' + d.skillsTotal + ' tracked';
+
+  var str = document.getElementById('kpi-streak');
+  str.classList.remove('empty');
+  animateCounter(str, d.streak, '');
+  document.getElementById('kpi-streak-sub').textContent = 'personal best ' + d.personalBest;
+  document.getElementById('streak-value').textContent = d.streak;
+
+  var rank = document.getElementById('kpi-rank');
+  rank.classList.remove('empty');
+  rank.textContent = '#' + d.rank;
+  document.getElementById('kpi-rank-sub').textContent = 'out of ' + d.totalLearners;
+}
+
+// ── Growth chart ───────────────────────────────────────────────────
+function renderGrowthChart(weeks, trend) {
+  if (!weeks || weeks.length < 2) return;
+  document.getElementById('growth-empty-label').style.display = 'none';
+
+  var trendEl = document.getElementById('growth-trend');
+  trendEl.classList.remove('empty');
+  trendEl.textContent = '↗ ' + (trend || '');
+
+  var W = 600, H = 200, pad = 10, top = 20, bot = 190;
+  var pts = weeks.map(function(v, i) {
+    return [
+      pad + (i / (weeks.length - 1)) * (W - 2 * pad),
+      bot - (v / 100) * (bot - top)
+    ];
+  });
+
+  function pStr(arr) {
+    return arr.map(function(p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' L ');
+  }
+
+  document.getElementById('growth-line').setAttribute('d', 'M ' + pStr(pts));
+
+  var last = pts[pts.length - 1], first = pts[0];
+  document.getElementById('growth-fill').setAttribute('d',
+    'M ' + pStr(pts) + ' L ' + last[0].toFixed(1) + ',' + bot + ' L ' + first[0].toFixed(1) + ',' + bot + ' Z');
+
+  var dotsG = document.getElementById('growth-dots');
+  dotsG.innerHTML = '';
+  var tip = document.getElementById('growth-tooltip');
+  var wrap = document.getElementById('growth-wrap');
+  var svg  = document.getElementById('growth-svg');
+
+  pts.forEach(function(p, i) {
+    var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', p[0].toFixed(1));
+    c.setAttribute('cy', p[1].toFixed(1));
+    c.setAttribute('r', '4');
+    c.setAttribute('fill', 'hsl(340 55% 38%)');
+    c.style.cursor = 'pointer';
+    c.addEventListener('mouseenter', function() {
+      var svgRect = svg.getBoundingClientRect();
+      var wrapRect = wrap.getBoundingClientRect();
+      var scaleX = svgRect.width / W;
+      var scaleY = svgRect.height / H;
+      tip.textContent = 'Week ' + (i + 1) + ' · ' + weeks[i] + '%';
+      tip.style.left = (p[0] * scaleX + (svgRect.left - wrapRect.left)) + 'px';
+      tip.style.top  = (p[1] * scaleY + (svgRect.top  - wrapRect.top))  + 'px';
+      tip.classList.add('visible');
+    });
+    c.addEventListener('mouseleave', function() { tip.classList.remove('visible'); });
+    dotsG.appendChild(c);
+  });
+}
+
+// ── Skills bars ────────────────────────────────────────────────────
+var GRAD = { marg: 'var(--gradient-marg)', gyan: 'var(--gradient-gyan)', disha: 'var(--gradient-disha)' };
+
+function renderSkills(skills) {
+  if (!skills || skills.length === 0) return;
+  var list = document.getElementById('skills-list');
+  list.innerHTML = skills.map(function(s) {
+    return '<div class="sk-row">' +
+      '<div class="sk-top"><span style="font-weight:500">' + s.name + '</span>' +
+      '<span class="sk-pct">' + s.pct + '%</span></div>' +
+      '<div class="bar thin"><div style="--target-width:' + s.pct + '%;background:' +
+      (GRAD[s.gradient] || GRAD.marg) + '"></div></div></div>';
+  }).join('');
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      list.classList.add('bars-animated');
+    });
+  });
+}
+
+// ── Heatmap ────────────────────────────────────────────────────────
+function intensityBg(v) {
+  if (v <= 0) return 'white';
+  if (v === 1) return 'hsl(200 50% 30% / 0.3)';
+  if (v === 2) return 'hsl(200 50% 30% / 0.6)';
+  return 'var(--marg)';
+}
+
+function renderHeatmap(values, dates, streak) {
+  var hm = document.getElementById('heatmap');
+  var tip = document.getElementById('heat-tip');
+  var wrap = document.querySelector('.heatmap-wrap');
+
+  var cells = (values && values.length === 140) ? values : new Array(140).fill(0);
+  var cellDates = (dates && dates.length === 140) ? dates : [];
+
+  hm.innerHTML = cells.map(function(v, i) {
+    var label = cellDates[i] ? cellDates[i] : ('Day ' + (i + 1));
+    var sess = ['No activity', 'Light', 'Moderate', 'Active'][Math.min(v, 3)];
+    return '<div style="background:' + intensityBg(v) + '" data-label="' + label + ': ' + sess + '"></div>';
+  }).join('');
+
+  document.getElementById('heatmap-streak-label').textContent = '🔥 ' + (streak || 0) + ' day streak';
+
+  hm.querySelectorAll('div').forEach(function(cell) {
+    cell.addEventListener('mouseenter', function(e) {
+      tip.textContent = this.dataset.label;
+      var rect = this.getBoundingClientRect();
+      var wRect = wrap.getBoundingClientRect();
+      tip.style.left = (rect.left - wRect.left + rect.width / 2) + 'px';
+      tip.style.top  = (rect.top  - wRect.top) + 'px';
+      tip.classList.add('visible');
+    });
+    cell.addEventListener('mouseleave', function() { tip.classList.remove('visible'); });
+  });
+}
+
+// ── Public API ─────────────────────────────────────────────────────
+/**
+ * loadDashboard(data)
+ * Call this from your backend fetch handler:
+ *
+ *   fetch('/api/progress')
+ *     .then(r => r.json())
+ *     .then(loadDashboard);
+ */
+window.loadDashboard = function(data) {
+  renderKPIs(data);
+  renderGrowthChart(data.growthWeeks, data.growthTrend);
+  renderSkills(data.skills);
+  renderHeatmap(data.heatmap, data.heatmapDates, data.streak);
+};
+
+// ── Initialise ─────────────────────────────────────────────────────
+(function init() {
+  renderHeatmap(new Array(140).fill(0), null, 0); // empty heatmap grid
+  if (window.AarambhData) loadDashboard(window.AarambhData);
+})();
+
+// ── Sidebar mobile toggle ──────────────────────────────────────────
+(function() {
+  var bar = document.querySelector('.mobile-bar');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebar-overlay');
+  if (!bar || !sidebar) return;
+  function open()  { sidebar.classList.add('open'); overlay.classList.add('visible'); bar.querySelector('button').setAttribute('aria-expanded','true'); }
+  function close() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); bar.querySelector('button').setAttribute('aria-expanded','false'); }
+  bar.querySelector('button').addEventListener('click', open);
+  overlay.addEventListener('click', close);
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi { border:1px solid var(--border); background: var(--surface); border-radius: 16px; padding: 20px; }
+.kpi .icon { font-size: 18px; margin-bottom: 12px; display: block; }
+.kpi .label { font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.18em; color: var(--muted-fg); }
+.kpi .value { font-family:'Fraunces',serif; font-size: 30px; font-weight: 700; margin-top: 4px; }
+.kpi .sub { font-size: 12px; color: var(--muted-fg); margin-top: 4px; }
+.charts { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 32px; }
+@media(max-width:900px){.charts{grid-template-columns:1fr}}
+.chart { border:1px solid var(--border); background: var(--surface); border-radius: 16px; padding: 24px; }
+.chart-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.chart-head .title { font-family:'Fraunces',serif; font-size: 20px; font-weight: 700; margin-top: 4px; }
+.chart-head .trend { color: var(--marg); font-size: 14px; font-family:'JetBrains Mono',monospace; }
+.skills-list { display: flex; flex-direction: column; gap: 16px; }
+.sk-row .sk-top { display:flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
+.sk-row .sk-pct { font-family:'JetBrains Mono',monospace; font-size: 12px; color: var(--muted-fg); }
+.heatmap-card { border:1px solid var(--border); background: var(--surface); border-radius: 16px; padding: 24px; }
+.heatmap { display: grid; grid-template-columns: repeat(20, 1fr); gap: 6px; }
+.heatmap div { aspect-ratio: 1; border-radius: 3px; }
+.heatmap-legend { display: flex; justify-content: flex-end; align-items: center; gap: 8px; font-family:'JetBrains Mono',monospace; font-size:10px; color: var(--muted-fg); margin-top: 16px; }
+.heatmap-legend .swatch { display: flex; gap: 4px; }
+.heatmap-legend .swatch div { width: 12px; height: 12px; border-radius: 3px; }

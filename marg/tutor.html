@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Tutor · Aarambh</title>
+<link rel="stylesheet" href="../css/shared.css">
+<link rel="stylesheet" href="../css/tutor.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-mark">A</div>
+      <div class="logo-text">
+        <span class="name">Aarambh</span>
+        <span class="sub">tech · field guide</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section core">
+        <div class="nav-section-title"><span class="dot"></span>Overview</div>
+        <a class="nav-link" href="../index.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+          <span>Home</span>
+        </a>
+      </div>
+      <div class="nav-section marg">
+        <div class="nav-section-title"><span class="dot"></span>Marg · Learn</div>
+        <a class="nav-link active" href="../marg/tutor.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4M5 12H2m20 0h-3M8 8h8a4 4 0 014 4v6H4v-6a4 4 0 014-4z"/></svg>
+          <span>AI Tutor</span>
+        </a>
+        <a class="nav-link" href="../marg/quiz.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8M4 12a8 8 0 1016 0 8 8 0 00-16 0z"/></svg>
+          <span>Coding Quiz</span>
+        </a>
+        <a class="nav-link" href="../marg/weakness.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg>
+          <span>Weak Areas</span>
+        </a>
+        <a class="nav-link" href="../marg/practice.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6m8 14h8"/></svg>
+          <span>Practice</span>
+        </a>
+      </div>
+      <div class="nav-section gyan">
+        <div class="nav-section-title"><span class="dot"></span>Gyan Sagar · Resources</div>
+        <a class="nav-link" href="../gyan/hub.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <span>Resource Hub</span>
+        </a>
+        <a class="nav-link" href="../gyan/router.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+          <span>Smart Router</span>
+        </a>
+        <a class="nav-link" href="../gyan/flashcards.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg>
+          <span>Flashcards</span>
+        </a>
+        <a class="nav-link" href="../gyan/snippets.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+          <span>Notes & Snippets</span>
+        </a>
+      </div>
+      <div class="nav-section disha">
+        <div class="nav-section-title"><span class="dot"></span>Disha · Career</div>
+        <a class="nav-link" href="../disha/career.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg>
+          <span>Career Suggest</span>
+        </a>
+        <a class="nav-link" href="../disha/path.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+          <span>Learning Path</span>
+        </a>
+        <a class="nav-link" href="../disha/dashboard.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg>
+          <span>Progress</span>
+        </a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="streak-card">
+        <div class="streak-label"><span>Current streak</span>🔥</div>
+        <div class="streak-value">12 <span>days</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="mobile-bar">
+      <strong style="font-family:'Fraunces',serif">Aarambh</strong>
+      <span class="mono-label">menu</span>
+    </div>
+
+    <div class="page-wrap">
+      <div class="step-label"></div>
+      <h1 class="page-title">Your <em class="marg">AI Tutor</em></h1>
+      <p class="page-subtitle">Ask anything. Get a clear concept, working code, and a real-life analogy. Switch depth on the fly.</p>
+
+      <!-- DB status badge -->
+      <div id="db-status" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:monospace;padding:4px 10px;border-radius:6px;background:#f0f0f0;color:#888;margin-bottom:14px">
+        <span id="db-dot" style="width:7px;height:7px;border-radius:50%;background:#ccc;display:inline-block"></span>
+        <span id="db-label">server connecting…</span>
+      </div>
+
+      <div class="toggle-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span class="mono-label">explain like</span>
+        <button class="pill active" id="pill-beginner">beginner</button>
+        <button class="pill" id="pill-advanced">advanced</button>
+
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+          <span class="mono-label" style="font-size:11px">voice</span>
+          <button id="voice-toggle" title="Toggle voice"
+            style="width:40px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;background:#4CAF50;transition:background .25s;flex-shrink:0">
+            <span id="voice-knob"
+              style="position:absolute;top:3px;left:20px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .25s;display:block"></span>
+          </button>
+          <button id="stop-voice"
+            style="font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer;display:none">
+            ⏹ stop
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-card" style="position:relative">
+        <div class="chat-head">
+          <div class="live" id="voice-status">tutor.session.active</div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <button id="history-btn" class="mono" style="font-size:12px;color:var(--muted-fg);cursor:pointer">⏱ history</button>
+            <button id="reset-btn"   class="mono" style="font-size:12px;color:var(--muted-fg);cursor:pointer">↻ reset</button>
+          </div>
+        </div>
+
+        <!-- History dropdown -->
+        <div id="history-panel" style="display:none;position:absolute;top:44px;right:12px;width:270px;max-height:300px;overflow-y:auto;background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:12px;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.12)">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.05em;color:#999;margin-bottom:8px">PREVIOUS QUESTIONS</div>
+          <div id="history-list"></div>
+        </div>
+
+        <div class="chat-body" id="chat-body">
+          <div class="msg user">
+            <div class="bubble"><div class="text">Explain binary search.</div></div>
+            <div class="avatar user">U</div>
+          </div>
+          <div class="msg">
+            <div class="avatar">AI</div>
+            <div class="bubble">
+              <div class="text">Binary search is a way to find an item in a <strong>sorted</strong> list by repeatedly cutting your search range in half.</div>
+              <div class="code-block">
+                <div class="code-head"><span class="mono-label">javascript</span><span class="mono-label copy-btn" style="cursor:pointer" onclick="copyCode(this)">copy</span></div>
+<pre><code>function binarySearch(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo &lt;= hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (arr[mid] === target) return mid;
+    arr[mid] &lt; target ? lo = mid + 1 : hi = mid - 1;
+  }
+  return -1;
+}</code></pre>
+              </div>
+              <div class="analogy"><strong>Analogy · </strong>Think of looking up a name in a phone book. Flip to the middle, go left or right, repeat. That's O(log n).</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="suggest-row" id="suggest-row">
+          <button class="suggest">Explain recursion</button>
+          <button class="suggest">What is a closure in JavaScript?</button>
+          <button class="suggest">Difference between SQL and NoSQL</button>
+          <button class="suggest">How does React rendering work?</button>
+        </div>
+
+        <form class="input-row" id="chat-form">
+          <input id="chat-input" placeholder="Ask anything — concepts, code, debugging…" autocomplete="off">
+          <button type="submit" class="btn btn-marg">Send →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GROQ_KEY  = "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";
+const SERVER    = "http://localhost:3000";   // ← server chal raha ho tab
+
+// ── DOM refs ─────────────────────────────────
+const chatInput    = document.getElementById("chat-input");
+const chatBody     = document.getElementById("chat-body");
+const chatForm     = document.getElementById("chat-form");
+const historyBtn   = document.getElementById("history-btn");
+const historyPanel = document.getElementById("history-panel");
+const historyList  = document.getElementById("history-list");
+const resetBtn     = document.getElementById("reset-btn");
+const pillBeginner = document.getElementById("pill-beginner");
+const pillAdvanced = document.getElementById("pill-advanced");
+const voiceToggle  = document.getElementById("voice-toggle");
+const voiceKnob    = document.getElementById("voice-knob");
+const stopVoiceBtn = document.getElementById("stop-voice");
+const voiceStatus  = document.getElementById("voice-status");
+const dbDot        = document.getElementById("db-dot");
+const dbLabel      = document.getElementById("db-label");
+
+// ── State ─────────────────────────────────────
+let chatHistory   = [];
+let userQuestions = [];
+let level         = "beginner";
+let voiceEnabled  = true;
+let serverOnline  = false;
+
+// ── Session ID (per browser tab, resets on reload) ──
+const SESSION_ID = "session_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+
+// ════════════════════════════════════════════
+//  SERVER HEALTH CHECK
+// ════════════════════════════════════════════
+async function checkServer() {
+  try {
+    const res = await fetch(SERVER + "/", { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      serverOnline = true;
+      dbDot.style.background   = "#16A34A";
+      dbLabel.textContent      = "MongoDB connected ✓";
+      document.getElementById("db-status").style.background = "#F0FDF4";
+      document.getElementById("db-status").style.color      = "#166534";
+    }
+  } catch {
+    serverOnline = false;
+    dbDot.style.background   = "#D97706";
+    dbLabel.textContent      = "server offline — saving locally";
+    document.getElementById("db-status").style.background = "#FFFBEB";
+    document.getElementById("db-status").style.color      = "#92400E";
+  }
+}
+checkServer();
+
+// ════════════════════════════════════════════
+//  SAVE TO MONGODB (via server)
+// ════════════════════════════════════════════
+async function saveMessageToDB(role, content) {
+  if (!serverOnline) return;   // silently skip if server is down
+  try {
+    await fetch(SERVER + "/api/chat/save", {
+      method : "POST",
+      headers: { "Content-Type": "application/json" },
+      body   : JSON.stringify({ sessionId: SESSION_ID, role, content, level })
+    });
+  } catch (err) {
+    console.warn("DB save failed (chat):", err.message);
+  }
+}
+
+// ════════════════════════════════════════════
+//  VOICE — Web Speech API
+// ════════════════════════════════════════════
+const synth = window.speechSynthesis;
+let voices = [];
+function loadVoices() { voices = synth.getVoices(); }
+loadVoices();
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+
+function speak(rawText) {
+  if (!voiceEnabled || !synth) return;
+  const clean = rawText
+    .replace(/```[\s\S]*?```/g, " Code example. ")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/^#{1,4}\s+/gm, "")
+    .replace(/^[-•*]\s+/gm, "")
+    .replace(/[_~>|]/g, "")
+    .replace(/\n{2,}/g, ". ")
+    .replace(/\n/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  synth.cancel();
+  const utt  = new SpeechSynthesisUtterance(clean);
+  utt.lang   = "en-IN";
+  utt.rate   = 0.9;
+  utt.pitch  = 1;
+  const pick =
+    voices.find(v => v.lang === "en-IN") ||
+    voices.find(v => v.name.toLowerCase().includes("google") && v.lang.startsWith("en")) ||
+    voices.find(v => v.lang.startsWith("en")) || null;
+  if (pick) utt.voice = pick;
+  utt.onstart = () => { voiceStatus.textContent = "🔊 speaking…"; stopVoiceBtn.style.display = "inline-block"; };
+  utt.onend = utt.onerror = () => { voiceStatus.textContent = "tutor.session.active"; stopVoiceBtn.style.display = "none"; };
+  synth.speak(utt);
+}
+
+stopVoiceBtn.addEventListener("click", () => {
+  synth.cancel();
+  voiceStatus.textContent = "tutor.session.active";
+  stopVoiceBtn.style.display = "none";
+});
+
+voiceToggle.addEventListener("click", () => {
+  voiceEnabled = !voiceEnabled;
+  voiceToggle.style.background = voiceEnabled ? "#4CAF50" : "#ccc";
+  voiceKnob.style.left         = voiceEnabled ? "20px"   : "3px";
+  if (!voiceEnabled) { synth.cancel(); stopVoiceBtn.style.display = "none"; voiceStatus.textContent = "tutor.session.active"; }
+});
+
+// ════════════════════════════════════════════
+//  LEVEL PILLS
+// ════════════════════════════════════════════
+pillBeginner.addEventListener("click", () => {
+  level = "beginner";
+  pillBeginner.classList.add("active");
+  pillAdvanced.classList.remove("active");
+});
+pillAdvanced.addEventListener("click", () => {
+  level = "advanced";
+  pillAdvanced.classList.add("active");
+  pillBeginner.classList.remove("active");
+});
+
+// ════════════════════════════════════════════
+//  SUGGEST BUTTONS
+// ════════════════════════════════════════════
+document.getElementById("suggest-row").addEventListener("click", (e) => {
+  if (e.target.classList.contains("suggest")) handleSend(e.target.textContent.trim());
+});
+
+// ════════════════════════════════════════════
+//  FORM SUBMIT
+// ════════════════════════════════════════════
+chatForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const msg = chatInput.value.trim();
+  if (!msg) return;
+  chatInput.value = "";
+  handleSend(msg);
+});
+
+// ════════════════════════════════════════════
+//  RESET
+// ════════════════════════════════════════════
+resetBtn.addEventListener("click", () => {
+  synth.cancel();
+  chatHistory = []; userQuestions = [];
+  chatBody.innerHTML = "";
+  historyList.innerHTML = "";
+  voiceStatus.textContent = "tutor.session.active";
+  stopVoiceBtn.style.display = "none";
+});
+
+// ════════════════════════════════════════════
+//  HISTORY PANEL
+// ════════════════════════════════════════════
+historyBtn.addEventListener("click", () => {
+  if (historyPanel.style.display === "block") { historyPanel.style.display = "none"; return; }
+  historyList.innerHTML = userQuestions.length
+    ? userQuestions.map((q, i) =>
+        `<div onclick="reuseQ('${q.replace(/'/g,"&#39;")}')"
+          style="padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;margin-bottom:5px;background:#f5f5f5;border:1px solid #eee">
+          ${i+1}. ${q.length > 55 ? q.slice(0,55)+"…" : q}
+        </div>`).join("")
+    : "<div style='font-size:13px;color:#999'>Abhi koi question nahi poocha.</div>";
+  historyPanel.style.display = "block";
+});
+document.addEventListener("click", (e) => {
+  if (!historyPanel.contains(e.target) && e.target !== historyBtn)
+    historyPanel.style.display = "none";
+});
+function reuseQ(q) { historyPanel.style.display = "none"; handleSend(q); }
+
+// ════════════════════════════════════════════
+//  CORE SEND FLOW
+// ════════════════════════════════════════════
+async function handleSend(msg) {
+  addUserBubble(msg);
+  userQuestions.push(msg);
+  chatHistory.push({ role: "user", content: msg });
+
+  // Save user message to MongoDB
+  saveMessageToDB("user", msg);
+
+  const typingEl = addTyping();
+  const reply    = await callGroq();
+  typingEl.remove();
+
+  chatHistory.push({ role: "assistant", content: reply });
+  addBotBubble(reply);
+  speak(reply);
+
+  // Save AI reply to MongoDB
+  saveMessageToDB("assistant", reply);
+}
+
+// ════════════════════════════════════════════
+//  GROQ API
+// ════════════════════════════════════════════
+async function callGroq() {
+  const sys = level === "beginner"
+    ? `You are a friendly AI tutor for beginner Indian tech students. Reply in English.
+Format every response exactly like this:
+
+**Concept**
+[2-3 line simple explanation]
+
+**Code Example**
+\`\`\`javascript
+[working code]
+\`\`\`
+
+**Analogy**
+[one relatable Indian real-life analogy]
+
+**Key Points**
+- point 1
+- point 2
+- point 3`
+    : `You are an expert AI tutor for advanced Indian developers. Use precise technical English.
+Format every response exactly like this:
+
+**Concept**
+[deep technical explanation]
+
+**Code Example**
+\`\`\`javascript
+[advanced code with edge cases]
+\`\`\`
+
+**Analogy**
+[technical analogy]
+
+**Key Points**
+- point 1
+- point 2
+- point 3`;
+
+  try {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method : "POST",
+      headers: { "Authorization": "Bearer " + GROQ_KEY, "Content-Type": "application/json" },
+      body   : JSON.stringify({
+        model     : "llama-3.3-70b-versatile",
+        max_tokens: 1024,
+        messages  : [{ role: "system", content: sys }, ...chatHistory]
+      })
+    });
+    const data = await res.json();
+    return data.choices?.[0]?.message?.content || "Koi response nahi mila bhai.";
+  } catch (err) {
+    console.error(err);
+    return "Network error — internet check karo.";
+  }
+}
+
+// ════════════════════════════════════════════
+//  UI HELPERS
+// ════════════════════════════════════════════
+function addUserBubble(text) {
+  const d = document.createElement("div");
+  d.className = "msg user";
+  d.innerHTML = `<div class="bubble"><div class="text">${escHtml(text)}</div></div><div class="avatar user">U</div>`;
+  chatBody.appendChild(d);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function addTyping() {
+  const d = document.createElement("div");
+  d.className = "msg";
+  d.innerHTML = `<div class="avatar">AI</div><div class="bubble"><div class="text" style="color:#aaa;font-style:italic">thinking…</div></div>`;
+  chatBody.appendChild(d);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  return d;
+}
+
+function addBotBubble(raw) {
+  const d = document.createElement("div");
+  d.className = "msg";
+  d.innerHTML = `<div class="avatar">AI</div><div class="bubble">${renderMD(raw)}</div>`;
+  chatBody.appendChild(d);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function renderMD(text) {
+  let h = escHtml(text);
+  h = h.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
+    `<div class="code-block" style="margin:10px 0">
+      <div class="code-head">
+        <span class="mono-label">${lang||"code"}</span>
+        <span class="mono-label copy-btn" style="cursor:pointer" onclick="copyCode(this)">copy</span>
+      </div>
+      <pre style="margin:0;padding:10px 14px;overflow-x:auto;font-size:13px;line-height:1.6"><code>${code.trim()}</code></pre>
+    </div>`);
+  h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  h = h.replace(/`([^`\n]+)`/g, "<code style='background:rgba(0,0,0,.07);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:13px'>$1</code>");
+  h = h.replace(/^### (.+)$/gm, "<h4 style='margin:14px 0 4px;font-size:14px;font-weight:600'>$1</h4>");
+  h = h.replace(/^## (.+)$/gm,  "<h3 style='margin:16px 0 4px;font-size:15px;font-weight:600'>$1</h3>");
+  h = h.replace(/^[-•*]\s+(.+)$/gm, "<li style='margin:3px 0'>$1</li>");
+  h = h.replace(/(<li[\s\S]*?<\/li>\n?)+/g, m => `<ul style='padding-left:18px;margin:6px 0'>${m}</ul>`);
+  h = h.replace(/\n{2,}/g, "<br><br>").replace(/\n/g, "<br>");
+  return `<div class="text" style="line-height:1.7">${h}</div>`;
+}
+
+function copyCode(btn) {
+  const code = btn.closest(".code-block").querySelector("code").innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = "copied!";
+    setTimeout(() => btn.textContent = "copy", 1500);
+  });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+</script>
+</body>
+</html>

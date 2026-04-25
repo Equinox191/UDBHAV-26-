@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Practice · Aarambh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F3EE;--surface:#FFFFFF;--surface2:#F0EDE7;--border:#E0DBD1;
+  --fg:#1A1916;--muted:#8C8880;--marg:#4338CA;--marg2:#EEF2FF;
+  --green:#16A34A;--red:#DC2626;--amber:#D97706;
+  --sidebar:240px;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--serif:'Fraunces',serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);min-height:100vh;display:flex;overflow-x:hidden}
+ 
+/* Sidebar */
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;overflow-y:auto}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:var(--fg);color:var(--surface);border-radius:8px;display:grid;place-items:center;font-family:var(--serif);font-size:15px;font-weight:700;flex-shrink:0}
+.logo-text .name{display:block;font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.1}
+.logo-text .sub{display:block;font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em}
+.sidebar-nav{flex:1;padding:12px 8px;overflow-y:auto}
+.nav-section{margin-bottom:20px}
+.nav-section-title{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.08em;padding:0 8px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.4}
+.nav-link{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;text-decoration:none;width:100%}
+.nav-link:hover{background:var(--surface2);color:var(--fg)}
+.nav-link.active{background:var(--marg2);color:var(--marg);font-weight:500}
+.nav-icon{width:15px;height:15px;stroke:currentColor;flex-shrink:0;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border)}
+.streak-card{background:var(--surface2);border-radius:10px;padding:10px 12px}
+.streak-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:4px}
+.streak-value{font-family:var(--serif);font-size:22px;font-weight:500}
+.streak-value span{font-size:13px;font-weight:400;color:var(--muted)}
+ 
+/* Main */
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;overflow-y:auto}
+.page-wrap{max-width:960px;margin:0 auto;padding:40px 32px 80px}
+.step-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:12px}
+.page-title{font-family:var(--serif);font-size:42px;font-weight:400;line-height:1.1;margin-bottom:8px}
+.page-title em{color:var(--marg);font-style:italic}
+.page-subtitle{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;border:1.5px solid var(--border);background:transparent;font-family:var(--font);font-size:13px;cursor:pointer;transition:all .15s;color:var(--fg);text-decoration:none}
+.btn:hover{border-color:var(--fg);background:var(--surface)}
+.btn-marg{background:var(--marg);color:#fff;border-color:var(--marg)}
+.btn-marg:hover{background:#3730A3;border-color:#3730A3;color:#fff}
+.btn-sm{padding:5px 12px;font-size:11px;border-radius:8px}
+ 
+/* Filter tabs */
+.filter-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.f-tab{padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;font-size:12px;font-family:var(--font);cursor:pointer;transition:all .15s;color:var(--muted)}
+.f-tab.active{background:var(--marg);color:#fff;border-color:var(--marg)}
+.f-tab:hover:not(.active){border-color:var(--marg);color:var(--marg)}
+ 
+/* Practice layout */
+.practice-grid{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:start}
+@media(max-width:700px){.practice-grid{grid-template-columns:1fr}}
+ 
+/* Task list */
+.task-list{display:flex;flex-direction:column;gap:6px;position:sticky;top:20px}
+.task-item{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;text-align:left;font-family:var(--font);transition:all .15s;width:100%}
+.task-item.active{border-color:var(--marg);background:var(--marg2)}
+.task-item:hover:not(.active){border-color:var(--marg)}
+.ti-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:500;margin-bottom:5px;color:var(--fg)}
+.ti-meta{display:flex;align-items:center;gap:6px}
+ 
+/* Difficulty chips */
+.chip{font-size:10px;font-family:var(--mono);padding:2px 7px;border-radius:6px}
+.chip-easy{background:var(--marg2);color:var(--marg)}
+.chip-medium{background:#FFFBEB;color:var(--amber)}
+.chip-hard{background:#FEF2F2;color:var(--red)}
+.solved-badge{font-size:11px;color:var(--green)}
+ 
+/* Editor panel */
+.editor-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.editor-head{padding:18px 20px 16px;border-bottom:1px solid var(--border)}
+.editor-head h2{font-family:var(--serif);font-size:20px;font-weight:500;margin-bottom:6px}
+.editor-head p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.test-case{background:var(--surface2);border-radius:8px;padding:8px 12px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6}
+.test-case span{color:var(--fg);font-weight:500}
+.editor-topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.editor-topbar span{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.code-area{width:100%;min-height:200px;padding:16px;font-family:var(--mono);font-size:13px;border:none;outline:none;resize:vertical;background:#1A1A1E;color:#E8E8E8;line-height:1.7;tab-size:2}
+.run-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid var(--border)}
+.run-row span{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.output-panel{padding:14px 16px;border-top:1px solid var(--border);background:#F9F9F7}
+.output-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.06em;margin-bottom:8px;text-transform:uppercase}
+.output-panel pre{font-family:var(--mono);font-size:12px;color:var(--fg);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.output-pass{color:var(--green)}
+.output-fail{color:var(--red)}
+.ai-hint-panel{padding:14px 16px;border-top:1px solid var(--border);background:var(--marg2)}
+.ai-hint-label{font-family:var(--mono);font-size:10px;color:var(--marg);letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase}
+.ai-hint-text{font-size:13px;line-height:1.6;color:var(--fg)}
+ 
+/* Spinner */
+.spinner-sm{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--marg);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+ 
+/* Stats bar */
+.stats-bar{display:flex;gap:12px;margin-bottom:18px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;flex-wrap:wrap}
+.stat-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.stat-item strong{color:var(--fg);font-size:14px}
+ 
+/* Topic group in task list */
+.topic-group-label{font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:.06em;padding:4px 8px;margin-top:8px;margin-bottom:2px}
+ 
+/* Empty state */
+.no-problems{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+ 
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-mark">A</div>
+    <div class="logo-text">
+      <span class="name">Aarambh</span>
+      <span class="sub">tech · field guide</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Overview</div>
+      <a class="nav-link" href="../index.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot" style="background:var(--marg)"></span>Marg · Learn</div>
+      <a class="nav-link" href="tutor.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 8V4M5 12H2m20 0h-3M8 8h8a4 4 0 014 4v6H4v-6a4 4 0 014-4z"/></svg><span>AI Tutor</span>
+      </a>
+      <a class="nav-link" href="quiz.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8M4 12a8 8 0 1016 0 8 8 0 00-16 0z"/></svg><span>Coding Quiz</span>
+      </a>
+      <a class="nav-link" href="weakness.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg><span>Weak Areas</span>
+      </a>
+      <a class="nav-link active" href="practice.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 17l6-6-6-6m8 14h8"/></svg><span>Practice</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Gyan Sagar · Resources</div>
+      <a class="nav-link" href="../gyan/hub.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Resource Hub</span>
+      </a>
+      <a class="nav-link" href="../gyan/router.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span>Smart Router</span>
+      </a>
+      <a class="nav-link" href="../gyan/flashcards.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg><span>Flashcards</span>
+      </a>
+      <a class="nav-link" href="../gyan/snippets.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg><span>Notes & Snippets</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Disha · Career</div>
+      <a class="nav-link" href="../disha/career.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg><span>Career Suggest</span>
+      </a>
+      <a class="nav-link" href="../disha/path.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span>Learning Path</span>
+      </a>
+      <a class="nav-link" href="../disha/dashboard.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg><span>Progress</span>
+      </a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="streak-card">
+      <div class="streak-label"><span>Current streak</span>🔥</div>
+      <div class="streak-value" id="streak-val">0 <span>days</span></div>
+    </div>
+  </div>
+</aside>
+ 
+<div class="main">
+  <div class="page-wrap">
+    <div class="step-label"></div>
+    <h1 class="page-title">Practice <em>Mode</em></h1>
+    <p class="page-subtitle">Topic-wise coding problems. Write your solution, run it — AI checks your code and hints if needed.</p>
+ 
+    <div id="stats-bar" class="stats-bar">
+      <div class="stat-item">📝 <strong id="stat-total">0</strong> problems</div>
+      <div class="stat-item">✅ <strong id="stat-solved" style="color:var(--green)">0</strong> solved</div>
+      <div class="stat-item">🔥 <strong id="stat-streak">0</strong> day streak</div>
+    </div>
+ 
+    <div class="filter-tabs" id="filter-tabs">
+      <button class="f-tab active" data-filter="all" onclick="setFilter('all',this)">All</button>
+      <button class="f-tab" data-filter="Arrays" onclick="setFilter('Arrays',this)">Arrays</button>
+      <button class="f-tab" data-filter="Strings" onclick="setFilter('Strings',this)">Strings</button>
+      <button class="f-tab" data-filter="Recursion" onclick="setFilter('Recursion',this)">Recursion</button>
+      <button class="f-tab" data-filter="Dynamic Programming" onclick="setFilter('Dynamic Programming',this)">DP</button>
+      <button class="f-tab" data-filter="Trees" onclick="setFilter('Trees',this)">Trees</button>
+      <button class="f-tab" data-filter="Graphs" onclick="setFilter('Graphs',this)">Graphs</button>
+      <button class="f-tab" data-filter="Stacks & Queues" onclick="setFilter('Stacks & Queues',this)">Stacks</button>
+      <button class="f-tab" data-filter="Linked Lists" onclick="setFilter('Linked Lists',this)">Linked Lists</button>
+      <button class="f-tab" data-filter="Binary Search" onclick="setFilter('Binary Search',this)">Binary Search</button>
+      <button class="f-tab" data-filter="Hash Maps" onclick="setFilter('Hash Maps',this)">Hash Maps</button>
+    </div>
+ 
+    <div class="practice-grid">
+      <div class="task-list" id="task-list"></div>
+      <div class="editor-panel" id="editor-panel">
+        <div class="editor-head">
+          <h2 id="p-title">Select a Problem</h2>
+          <p id="p-desc">Choose a problem from the list to start coding.</p>
+          <div class="test-case" id="p-test" style="display:none"></div>
+        </div>
+        <div class="editor-topbar">
+          <span id="p-lang">solution.js</span>
+          <button class="btn btn-sm" onclick="resetCode()" style="font-size:11px">↺ reset</button>
+        </div>
+        <textarea class="code-area" id="code-editor" spellcheck="false" placeholder="Select a problem to start coding..."
+          onkeydown="handleTab(event)"></textarea>
+        <div class="run-row">
+          <span id="run-label">runtime: node 20 (simulated)</span>
+          <button class="btn btn-marg btn-sm" onclick="runCode()">▶ Run Code</button>
+        </div>
+        <div class="output-panel" id="output-panel" style="display:none">
+          <div class="output-label">output</div>
+          <pre id="output-pre"></pre>
+        </div>
+        <div class="ai-hint-panel" id="ai-hint-panel" style="display:none">
+          <div class="ai-hint-label">🤖 AI Hint</div>
+          <div class="ai-hint-text" id="ai-hint-text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<script>
+// Streak
+(function(){
+  const today=new Date().toDateString();
+  let d=JSON.parse(localStorage.getItem('aarambh_streak')||'{"streak":0,"last":""}');
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  if(d.last===today){}
+  else if(d.last===yesterday){d.streak++;d.last=today;}
+  else{d.streak=1;d.last=today;}
+  localStorage.setItem('aarambh_streak',JSON.stringify(d));
+  document.getElementById('streak-val').innerHTML=d.streak+' <span>days</span>';
+  document.getElementById('stat-streak').textContent=d.streak;
+})();
+ 
+// ── Problem Bank ──────────────────────────────────────────────────
+const PROBLEMS=[
+  // ARRAYS
+  {id:1,title:'Reverse an Array',topic:'Arrays',diff:'easy',
+   desc:'Return the input array reversed without using Array.prototype.reverse().',
+   test:'[1,2,3,4] → [4,3,2,1]  |  [5] → [5]  |  [] → []',
+   starter:'function reverseArray(arr) {\n  // your code here\n  return arr;\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('arr',code+'\nreturn reverseArray(arr)');
+     const r1=JSON.stringify(fn([1,2,3,4])),e1='[4,3,2,1]';
+     const r2=JSON.stringify(fn([5])),e2='[5]';
+     const r3=JSON.stringify(fn([])),e3='[]';
+     if(r1===e1&&r2===e2&&r3===e3)return{pass:true,msg:'✓ All 3 test cases passed!\n  [1,2,3,4] → '+r1+'\n  [5] → '+r2+'\n  [] → '+r3};
+     return{pass:false,msg:'✗ Failed\n  [1,2,3,4] → got '+r1+', expected '+e1};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:2,title:'Find Max Element',topic:'Arrays',diff:'easy',
+   desc:'Return the maximum element in an array. Do not use Math.max or spread operator.',
+   test:'[3,1,4,1,5,9,2,6] → 9  |  [-1,-5,-2] → -1',
+   starter:'function findMax(arr) {\n  // your code here\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('arr',code+'\nreturn findMax(arr)');
+     if(fn([3,1,4,1,5,9,2,6])===9&&fn([-1,-5,-2])===-1&&fn([42])===42)
+       return{pass:true,msg:'✓ All test cases passed!\n  findMax([3,1,4,1,5,9,2,6]) = 9\n  findMax([-1,-5,-2]) = -1'};
+     return{pass:false,msg:'✗ findMax([3,1,4,1,5,9,2,6]) = '+fn([3,1,4,1,5,9,2,6])+', expected 9'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:3,title:'Two Sum',topic:'Arrays',diff:'medium',
+   desc:'Given an array of integers and a target, return indices of two numbers that add up to target. Each input has exactly one solution.',
+   test:'nums=[2,7,11,15], target=9 → [0,1]  |  nums=[3,2,4], target=6 → [1,2]',
+   starter:'function twoSum(nums, target) {\n  // your code here\n  // return array of 2 indices\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('nums','target',code+'\nreturn twoSum(nums,target)');
+     const r1=fn([2,7,11,15],9),r2=fn([3,2,4],6),r3=fn([3,3],6);
+     const ok1=Array.isArray(r1)&&r1.includes(0)&&r1.includes(1);
+     const ok2=Array.isArray(r2)&&r2.includes(1)&&r2.includes(2);
+     const ok3=Array.isArray(r3)&&r3.length===2;
+     if(ok1&&ok2&&ok3)return{pass:true,msg:'✓ All test cases passed!\n  twoSum([2,7,11,15],9) = ['+r1+']\n  twoSum([3,2,4],6) = ['+r2+']'};
+     return{pass:false,msg:'✗ twoSum([2,7,11,15],9) = ['+r1+'], expected [0,1]'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:4,title:'Move Zeroes',topic:'Arrays',diff:'easy',
+   desc:'Move all 0s to the end of the array while maintaining the relative order of non-zero elements. Modify in place.',
+   test:'[0,1,0,3,12] → [1,3,12,0,0]  |  [0] → [0]',
+   starter:'function moveZeroes(nums) {\n  // modify nums in place\n  // no return needed\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('nums',code+'\nmoveZeroes(nums);return nums;');
+     const r1=JSON.stringify(fn([0,1,0,3,12])),e1='[1,3,12,0,0]';
+     const r2=JSON.stringify(fn([0])),e2='[0]';
+     const r3=JSON.stringify(fn([1,0,0,2])),e3='[1,2,0,0]';
+     if(r1===e1&&r2===e2&&r3===e3)return{pass:true,msg:'✓ All test cases passed!\n  [0,1,0,3,12] → '+r1};
+     return{pass:false,msg:'✗ [0,1,0,3,12] → got '+r1+', expected '+e1};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:5,title:'Max Subarray (Kadane\'s)',topic:'Arrays',diff:'medium',
+   desc:'Find the subarray with the largest sum and return its sum. The subarray must contain at least one number.',
+   test:'[-2,1,-3,4,-1,2,1,-5,4] → 6  |  [1] → 1  |  [-1,-2] → -1',
+   starter:'function maxSubArray(nums) {\n  // Kadane\'s algorithm\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('nums',code+'\nreturn maxSubArray(nums)');
+     if(fn([-2,1,-3,4,-1,2,1,-5,4])===6&&fn([1])===1&&fn([-1,-2])===-1)
+       return{pass:true,msg:'✓ All test cases passed!\n  [-2,1,-3,4,-1,2,1,-5,4] → 6\n  [-1,-2] → -1'};
+     return{pass:false,msg:'✗ maxSubArray([-2,1,-3,4,-1,2,1,-5,4]) = '+fn([-2,1,-3,4,-1,2,1,-5,4])+', expected 6'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:6,title:'Container With Most Water',topic:'Arrays',diff:'hard',
+   desc:'Given array height[], find two lines that together with x-axis form a container holding the most water. Return the max area.',
+   test:'[1,8,6,2,5,4,8,3,7] → 49  |  [1,1] → 1',
+   starter:'function maxArea(height) {\n  // two pointer approach\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('height',code+'\nreturn maxArea(height)');
+     if(fn([1,8,6,2,5,4,8,3,7])===49&&fn([1,1])===1)
+       return{pass:true,msg:'✓ All test cases passed!\n  [1,8,6,2,5,4,8,3,7] → 49'};
+     return{pass:false,msg:'✗ got '+fn([1,8,6,2,5,4,8,3,7])+', expected 49'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // STRINGS
+  {id:7,title:'Palindrome Check',topic:'Strings',diff:'easy',
+   desc:'Return true if the string is a palindrome (reads same forwards and backwards), ignoring non-alphanumeric characters and case.',
+   test:'"racecar" → true  |  "hello" → false  |  "A man a plan a canal Panama" → true',
+   starter:'function isPalindrome(s) {\n  // your code here\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('s',code+'\nreturn isPalindrome(s)');
+     const clean=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
+     if(fn('racecar')===true&&fn('hello')===false&&fn('A man a plan a canal Panama')===true)
+       return{pass:true,msg:'✓ All test cases passed!\n  "racecar" → true\n  "hello" → false\n  "A man a plan..." → true'};
+     return{pass:false,msg:'✗ isPalindrome("racecar") = '+fn('racecar')+', expected true'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:8,title:'Longest Common Prefix',topic:'Strings',diff:'easy',
+   desc:'Find the longest common prefix string among an array of strings. Return "" if none.',
+   test:'["flower","flow","flight"] → "fl"  |  ["dog","racecar","car"] → ""',
+   starter:'function longestCommonPrefix(strs) {\n  // your code here\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('strs',code+'\nreturn longestCommonPrefix(strs)');
+     if(fn(['flower','flow','flight'])==='fl'&&fn(['dog','racecar','car'])===''&&fn(['ab','a'])==='a')
+       return{pass:true,msg:'✓ All test cases passed!\n  ["flower","flow","flight"] → "fl"\n  ["dog","racecar","car"] → ""'};
+     return{pass:false,msg:'✗ got "'+fn(['flower','flow','flight'])+'", expected "fl"'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:9,title:'Anagram Check',topic:'Strings',diff:'easy',
+   desc:'Given two strings s and t, return true if t is an anagram of s.',
+   test:'"anagram","nagaram" → true  |  "rat","car" → false',
+   starter:'function isAnagram(s, t) {\n  // your code here\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('s','t',code+'\nreturn isAnagram(s,t)');
+     if(fn('anagram','nagaram')===true&&fn('rat','car')===false&&fn('a','a')===true)
+       return{pass:true,msg:'✓ All test cases passed!\n  ("anagram","nagaram") → true\n  ("rat","car") → false'};
+     return{pass:false,msg:'✗ isAnagram("anagram","nagaram") = '+fn('anagram','nagaram')+', expected true'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:10,title:'Longest Substring Without Repeating',topic:'Strings',diff:'medium',
+   desc:'Given a string, find the length of the longest substring without repeating characters.',
+   test:'"abcabcbb" → 3  |  "bbbbb" → 1  |  "pwwkew" → 3',
+   starter:'function lengthOfLongestSubstring(s) {\n  // sliding window approach\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('s',code+'\nreturn lengthOfLongestSubstring(s)');
+     if(fn('abcabcbb')===3&&fn('bbbbb')===1&&fn('pwwkew')===3&&fn('')===0)
+       return{pass:true,msg:'✓ All test cases passed!\n  "abcabcbb" → 3\n  "bbbbb" → 1\n  "pwwkew" → 3'};
+     return{pass:false,msg:'✗ "abcabcbb" → got '+fn('abcabcbb')+', expected 3'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // RECURSION
+  {id:11,title:'Fibonacci Number',topic:'Recursion',diff:'easy',
+   desc:'Return the n-th Fibonacci number. F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2). Can you do it both recursively and iteratively?',
+   test:'fib(0)=0  |  fib(1)=1  |  fib(6)=8  |  fib(10)=55',
+   starter:'function fib(n) {\n  // your code here\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('n',code+'\nreturn fib(n)');
+     if(fn(0)===0&&fn(1)===1&&fn(6)===8&&fn(10)===55)
+       return{pass:true,msg:'✓ All test cases passed!\n  fib(0)=0, fib(1)=1, fib(6)=8, fib(10)=55'};
+     return{pass:false,msg:'✗ fib(6) = '+fn(6)+', expected 8'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:12,title:'Power Function',topic:'Recursion',diff:'medium',
+   desc:'Implement pow(x, n) which calculates x raised to the power n (x^n). Handle negative n too.',
+   test:'pow(2,10)=1024  |  pow(2,-2)=0.25  |  pow(2,0)=1',
+   starter:'function myPow(x, n) {\n  // implement x^n recursively\n  // handle negative n\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('x','n',code+'\nreturn myPow(x,n)');
+     const approx=(a,b)=>Math.abs(a-b)<0.0001;
+     if(approx(fn(2,10),1024)&&approx(fn(2,-2),0.25)&&approx(fn(2,0),1)&&approx(fn(3,3),27))
+       return{pass:true,msg:'✓ All test cases passed!\n  pow(2,10)=1024, pow(2,-2)=0.25, pow(3,3)=27'};
+     return{pass:false,msg:'✗ myPow(2,10) = '+fn(2,10)+', expected 1024'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // DYNAMIC PROGRAMMING
+  {id:13,title:'Climbing Stairs',topic:'Dynamic Programming',diff:'easy',
+   desc:'You can climb 1 or 2 steps at a time. In how many distinct ways can you reach the top of n stairs?',
+   test:'n=1 → 1  |  n=2 → 2  |  n=3 → 3  |  n=5 → 8',
+   starter:'function climbStairs(n) {\n  // DP approach\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('n',code+'\nreturn climbStairs(n)');
+     if(fn(1)===1&&fn(2)===2&&fn(3)===3&&fn(5)===8&&fn(10)===89)
+       return{pass:true,msg:'✓ All test cases passed!\n  n=1→1, n=2→2, n=3→3, n=5→8, n=10→89'};
+     return{pass:false,msg:'✗ climbStairs(5) = '+fn(5)+', expected 8'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:14,title:'House Robber',topic:'Dynamic Programming',diff:'medium',
+   desc:'Given array of money in each house, find max you can rob without robbing two adjacent houses.',
+   test:'[1,2,3,1] → 4  |  [2,7,9,3,1] → 12  |  [1] → 1',
+   starter:'function rob(nums) {\n  // DP: dp[i] = max money up to house i\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('nums',code+'\nreturn rob(nums)');
+     if(fn([1,2,3,1])===4&&fn([2,7,9,3,1])===12&&fn([1])===1)
+       return{pass:true,msg:'✓ All test cases passed!\n  [1,2,3,1] → 4\n  [2,7,9,3,1] → 12'};
+     return{pass:false,msg:'✗ rob([1,2,3,1]) = '+fn([1,2,3,1])+', expected 4'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:15,title:'Coin Change',topic:'Dynamic Programming',diff:'medium',
+   desc:'Given coin denominations and an amount, return fewest coins needed to make up the amount, or -1 if impossible.',
+   test:'coins=[1,5,11], amount=15 → 3  |  coins=[2], amount=3 → -1',
+   starter:'function coinChange(coins, amount) {\n  // bottom-up DP\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('coins','amount',code+'\nreturn coinChange(coins,amount)');
+     if(fn([1,5,11],15)===3&&fn([2],3)===-1&&fn([1],0)===0)
+       return{pass:true,msg:'✓ All test cases passed!\n  coins=[1,5,11],amount=15 → 3\n  coins=[2],amount=3 → -1'};
+     return{pass:false,msg:'✗ coinChange([1,5,11],15) = '+fn([1,5,11],15)+', expected 3'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // TREES
+  {id:16,title:'Max Depth of Binary Tree',topic:'Trees',diff:'easy',
+   desc:'Given root of a binary tree {val, left, right}, return its maximum depth (number of nodes along the longest path).',
+   test:'Tree: 3→(9, 20→(15,7)) → depth 3  |  null → 0',
+   starter:'function maxDepth(root) {\n  // recursive DFS\n  // node has: node.val, node.left, node.right\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('root',code+'\nreturn maxDepth(root)');
+     const t1={val:3,left:{val:9,left:null,right:null},right:{val:20,left:{val:15,left:null,right:null},right:{val:7,left:null,right:null}}};
+     const t2={val:1,left:null,right:{val:2,left:null,right:null}};
+     if(fn(t1)===3&&fn(null)===0&&fn(t2)===2)
+       return{pass:true,msg:'✓ All test cases passed!\n  maxDepth(tree) = 3\n  maxDepth(null) = 0'};
+     return{pass:false,msg:'✗ maxDepth(tree) = '+fn(t1)+', expected 3'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:17,title:'Invert Binary Tree',topic:'Trees',diff:'easy',
+   desc:'Invert (mirror) a binary tree. Swap left and right children for every node.',
+   test:'[4,2,7,1,3,6,9] → [4,7,2,9,6,3,1]',
+   starter:'function invertTree(root) {\n  // recursive swap\n  // node has: node.left, node.right\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('root',code+'\nreturn invertTree(root)');
+     const mk=(v,l=null,r=null)=>({val:v,left:l,right:r});
+     const t=mk(4,mk(2,mk(1),mk(3)),mk(7,mk(6),mk(9)));
+     const inv=fn(t);
+     if(inv&&inv.val===4&&inv.left&&inv.left.val===7&&inv.right&&inv.right.val===2)
+       return{pass:true,msg:'✓ Inversion correct!\n  Root=4, Left=7 (was 2), Right=2 (was 7)'};
+     return{pass:false,msg:'✗ Root left should be 7, got '+(inv&&inv.left?inv.left.val:'null')};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:18,title:'Validate BST',topic:'Trees',diff:'medium',
+   desc:'Check if a binary tree is a valid Binary Search Tree (left < node < right for every subtree).',
+   test:'[2,1,3] → true  |  [5,1,4,null,null,3,6] → false',
+   starter:'function isValidBST(root) {\n  // use min/max bounds per subtree\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('root',code+'\nreturn isValidBST(root)');
+     const mk=(v,l=null,r=null)=>({val:v,left:l,right:r});
+     const t1=mk(2,mk(1),mk(3));
+     const t2=mk(5,mk(1),mk(4,mk(3),mk(6)));
+     const t3=mk(2,mk(2),null);
+     if(fn(t1)===true&&fn(t2)===false&&fn(t3)===false)
+       return{pass:true,msg:'✓ All test cases passed!\n  [2,1,3] → true\n  [5,1,4,3,6] → false'};
+     return{pass:false,msg:'✗ isValidBST([2,1,3]) = '+fn(t1)+', expected true'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // GRAPHS
+  {id:19,title:'Number of Islands',topic:'Graphs',diff:'medium',
+   desc:'Given m×n grid of "1" (land) and "0" (water), count islands. An island is formed by connecting adjacent lands horizontally/vertically.',
+   test:'grid of 1s and 0s → count connected components of 1s',
+   starter:'function numIslands(grid) {\n  // BFS or DFS\n  // mark visited cells\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('grid',code+'\nreturn numIslands(grid)');
+     const g1=[['1','1','0','0','0'],['1','1','0','0','0'],['0','0','1','0','0'],['0','0','0','1','1']];
+     const g2=[['1','1','1'],['0','1','0'],['1','1','1']];
+     const g3=[['0','0'],['0','0']];
+     if(fn(g1)===3&&fn(g2)===1&&fn(g3)===0)
+       return{pass:true,msg:'✓ All test cases passed!\n  grid1 → 3 islands\n  grid2 → 1 island\n  grid3 → 0 islands'};
+     return{pass:false,msg:'✗ numIslands(grid1) = '+fn(g1)+', expected 3'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:20,title:'BFS Shortest Path',topic:'Graphs',diff:'medium',
+   desc:'Given adjacency list (object), source, and destination, find shortest path length using BFS. Return -1 if unreachable.',
+   test:'graph={0:[1,2],1:[3],2:[3],3:[]}, src=0, dst=3 → 2',
+   starter:'function shortestPath(graph, src, dst) {\n  // BFS with queue\n  // return number of edges, or -1 if unreachable\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('graph','src','dst',code+'\nreturn shortestPath(graph,src,dst)');
+     const g={0:[1,2],1:[3],2:[3],3:[]};
+     if(fn(g,0,3)===2&&fn(g,0,0)===0&&fn({0:[],1:[]},0,1)===-1)
+       return{pass:true,msg:'✓ All test cases passed!\n  shortestPath(0→3) = 2\n  shortestPath(0→0) = 0\n  unreachable → -1'};
+     return{pass:false,msg:'✗ shortestPath(0,3) = '+fn(g,0,3)+', expected 2'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // STACKS & QUEUES
+  {id:21,title:'Valid Parentheses',topic:'Stacks & Queues',diff:'easy',
+   desc:'Given a string with (, ), {, }, [, ], determine if the brackets are valid (properly opened and closed).',
+   test:'"()[]{}" → true  |  "([)]" → false  |  "{[]}" → true',
+   starter:'function isValid(s) {\n  // use a stack\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('s',code+'\nreturn isValid(s)');
+     if(fn('()[]{}')===true&&fn('([)]')===false&&fn('{[]}')===true&&fn('')===true&&fn('[')===false)
+       return{pass:true,msg:'✓ All test cases passed!\n  "(()[]{}" → true\n  "([)]" → false\n  "{[]}" → true'};
+     return{pass:false,msg:'✗ isValid("()[]{}")='+fn('()[]{}')+', expected true'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:22,title:'Implement Stack Using Array',topic:'Stacks & Queues',diff:'easy',
+   desc:'Implement a Stack class with push(val), pop(), peek(), isEmpty() methods.',
+   test:'push(1),push(2),peek()→2, pop()→2, pop()→1, isEmpty()→true',
+   starter:'class Stack {\n  constructor() {\n    // initialize\n  }\n  push(val) {\n    // add to top\n  }\n  pop() {\n    // remove and return top, or -1 if empty\n  }\n  peek() {\n    // return top without removing, or -1 if empty\n  }\n  isEmpty() {\n    // return true if empty\n  }\n}',
+   testFn:(code)=>{
+     try{const StackClass=new Function(code+'\nreturn Stack;')();
+     const s=new StackClass();
+     if(s.isEmpty()!==true) return{pass:false,msg:'✗ isEmpty() should return true on empty stack'};
+     s.push(1);s.push(2);s.push(3);
+     if(s.peek()!==3) return{pass:false,msg:'✗ peek() after push(1,2,3) should be 3, got '+s.peek()};
+     if(s.pop()!==3) return{pass:false,msg:'✗ pop() should return 3'};
+     if(s.pop()!==2) return{pass:false,msg:'✗ pop() should return 2'};
+     s.pop();
+     if(s.isEmpty()!==true) return{pass:false,msg:'✗ isEmpty() should return true after popping all'};
+     return{pass:true,msg:'✓ All tests passed!\n  push(1,2,3), peek()=3, pop()=3, pop()=2, isEmpty()=true'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // LINKED LISTS
+  {id:23,title:'Merge Two Sorted Lists',topic:'Linked Lists',diff:'easy',
+   desc:'Merge two sorted arrays (simulating linked lists) into one sorted array.',
+   test:'[1,2,4] + [1,3,4] → [1,1,2,3,4,4]  |  [] + [0] → [0]',
+   starter:'function mergeSorted(l1, l2) {\n  // merge two sorted arrays\n  // return merged sorted array\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('l1','l2',code+'\nreturn mergeSorted(l1,l2)');
+     if(JSON.stringify(fn([1,2,4],[1,3,4]))==='[1,1,2,3,4,4]'&&JSON.stringify(fn([],[0]))==='[0]'&&JSON.stringify(fn([],[])) ==='[]')
+       return{pass:true,msg:'✓ All test cases passed!\n  [1,2,4]+[1,3,4] → [1,1,2,3,4,4]\n  []+[0] → [0]'};
+     return{pass:false,msg:'✗ got '+JSON.stringify(fn([1,2,4],[1,3,4]))+', expected [1,1,2,3,4,4]'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:24,title:'Detect Cycle in List',topic:'Linked Lists',diff:'medium',
+   desc:'Detect if a linked list (as array) has a cycle. Given tailIndex (-1 if no cycle), simulate Floyd\'s algorithm.',
+   test:'[3,2,0,-4] with tail→index 1 → true  |  [1,2] no cycle → false',
+   starter:'function hasCycle(head, tailConnectsTo) {\n  // head is an array, tailConnectsTo is the index tail loops to (-1 = no cycle)\n  // use Floyd\'s tortoise and hare OR just check tailConnectsTo\n  // return true/false\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('head','tailConnectsTo',code+'\nreturn hasCycle(head,tailConnectsTo)');
+     if(fn([3,2,0,-4],1)===true&&fn([1,2],-1)===false&&fn([1],0)===true&&fn([1],-1)===false)
+       return{pass:true,msg:'✓ All test cases passed!\n  [3,2,0,-4] tail→1 = true\n  [1,2] no cycle = false'};
+     return{pass:false,msg:'✗ hasCycle([3,2,0,-4],1) = '+fn([3,2,0,-4],1)+', expected true'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // BINARY SEARCH
+  {id:25,title:'Binary Search',topic:'Binary Search',diff:'easy',
+   desc:'Implement binary search on a sorted array. Return the index of target, or -1 if not found.',
+   test:'[-1,0,3,5,9,12], target=9 → 4  |  target=2 → -1',
+   starter:'function binarySearch(nums, target) {\n  let lo = 0, hi = nums.length - 1;\n  // implement binary search\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('nums','target',code+'\nreturn binarySearch(nums,target)');
+     const arr=[-1,0,3,5,9,12];
+     if(fn(arr,9)===4&&fn(arr,2)===-1&&fn(arr,-1)===0&&fn(arr,12)===5)
+       return{pass:true,msg:'✓ All test cases passed!\n  search(9)=4, search(2)=-1, search(-1)=0'};
+     return{pass:false,msg:'✗ binarySearch(arr,9) = '+fn(arr,9)+', expected 4'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+  {id:26,title:'Search in Rotated Array',topic:'Binary Search',diff:'hard',
+   desc:'Search target in a sorted array that was rotated at some pivot. Must be O(log n).',
+   test:'[4,5,6,7,0,1,2], target=0 → 4  |  target=3 → -1',
+   starter:'function searchRotated(nums, target) {\n  // modified binary search\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('nums','target',code+'\nreturn searchRotated(nums,target)');
+     if(fn([4,5,6,7,0,1,2],0)===4&&fn([4,5,6,7,0,1,2],3)===-1&&fn([1],0)===-1&&fn([1,3],3)===1)
+       return{pass:true,msg:'✓ All test cases passed!\n  [4,5,6,7,0,1,2],target=0 → 4\n  target=3 → -1'};
+     return{pass:false,msg:'✗ searchRotated([4,5,6,7,0,1,2],0) = '+fn([4,5,6,7,0,1,2],0)+', expected 4'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+ 
+  // HASH MAPS
+  {id:27,title:'Group Anagrams',topic:'Hash Maps',diff:'medium',
+   desc:'Given an array of strings, group anagrams together. Order of groups doesn\'t matter.',
+   test:'["eat","tea","tan","ate","nat","bat"] → [["eat","tea","ate"],["tan","nat"],["bat"]]',
+   starter:'function groupAnagrams(strs) {\n  // use sorted string as key in a map\n}',
+   testFn:(code)=>{
+     try{const fn=new Function('strs',code+'\nreturn groupAnagrams(strs)');
+     const result=fn(['eat','tea','tan','ate','nat','bat']);
+     if(!Array.isArray(result)) return{pass:false,msg:'✗ Should return an array of groups'};
+     const sortGrp=g=>g.map(s=>s.split('').sort().join('')).sort();
+     const hasGroup=(res,expected)=>res.some(g=>JSON.stringify(sortGrp(g))===JSON.stringify(sortGrp(expected)));
+     if(result.length===3&&hasGroup(result,['eat','tea','ate'])&&hasGroup(result,['tan','nat'])&&hasGroup(result,['bat']))
+       return{pass:true,msg:'✓ Correct! Found 3 groups:\n  ["eat","tea","ate"], ["tan","nat"], ["bat"]'};
+     return{pass:false,msg:'✗ Got '+result.length+' groups, expected 3'};}catch(e){return{pass:false,msg:'✗ Runtime Error: '+e.message};}
+   }},
+];
+ 
+let solvedProblems=JSON.parse(localStorage.getItem('aarambh_solved')||'[]');
+let currentProblem=null;
+let currentFilter='all';
+ 
+function initStats(){
+  document.getElementById('stat-total').textContent=PROBLEMS.length;
+  document.getElementById('stat-solved').textContent=solvedProblems.length;
+  const d=JSON.parse(localStorage.getItem('aarambh_streak')||'{"streak":0}');
+  document.getElementById('stat-streak').textContent=d.streak;
+}
+ 
+function setFilter(f, btn){
+  currentFilter=f;
+  document.querySelectorAll('.f-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderTaskList();
+}
+ 
+function renderTaskList(){
+  const filtered=currentFilter==='all'?PROBLEMS:PROBLEMS.filter(p=>p.topic===currentFilter);
+  const list=document.getElementById('task-list');
+  if(filtered.length===0){list.innerHTML='<div class="no-problems">No problems in this topic yet.</div>';return;}
+  list.innerHTML=filtered.map(p=>{
+    const solved=solvedProblems.includes(p.id);
+    const chipClass='chip-'+p.diff;
+    const active=currentProblem&&currentProblem.id===p.id?'active':'';
+    return`<button class="task-item ${active}" onclick="selectProblem(${p.id})">
+      <div class="ti-head">
+        <span>${p.title}</span>
+        ${solved?'<span class="solved-badge">✓</span>':''}
+      </div>
+      <div class="ti-meta">
+        <span class="chip ${chipClass}">${p.diff}</span>
+        <span style="font-size:10px;color:var(--muted);font-family:var(--mono)">${p.topic}</span>
+      </div>
+    </button>`;
+  }).join('');
+}
+ 
+function selectProblem(id){
+  currentProblem=PROBLEMS.find(p=>p.id===id);
+  if(!currentProblem) return;
+  document.getElementById('p-title').textContent=currentProblem.title;
+  document.getElementById('p-desc').textContent=currentProblem.desc;
+  const testEl=document.getElementById('p-test');
+  testEl.innerHTML='<span>test · </span>'+currentProblem.test;
+  testEl.style.display='block';
+  document.getElementById('p-lang').textContent=currentProblem.lang||'solution.js';
+  document.getElementById('code-editor').value=currentProblem.starter;
+  document.getElementById('output-panel').style.display='none';
+  document.getElementById('ai-hint-panel').style.display='none';
+  renderTaskList();
+}
+ 
+function resetCode(){
+  if(currentProblem){
+    document.getElementById('code-editor').value=currentProblem.starter;
+    document.getElementById('output-panel').style.display='none';
+    document.getElementById('ai-hint-panel').style.display='none';
+  }
+}
+ 
+function handleTab(e){
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const ta=e.target,start=ta.selectionStart,end=ta.selectionEnd;
+    ta.value=ta.value.substring(0,start)+'  '+ta.value.substring(end);
+    ta.selectionStart=ta.selectionEnd=start+2;
+  }
+}
+ 
+async function runCode(){
+  if(!currentProblem){alert('Please select a problem first.');return;}
+  const code=document.getElementById('code-editor').value;
+  const outPanel=document.getElementById('output-panel');
+  const outPre=document.getElementById('output-pre');
+  const hintPanel=document.getElementById('ai-hint-panel');
+  const hintText=document.getElementById('ai-hint-text');
+ 
+  outPanel.style.display='block';
+  hintPanel.style.display='none';
+  outPre.textContent='Running test cases...';
+ 
+  // Small delay so UI updates
+  await new Promise(r=>setTimeout(r,80));
+ 
+  let result;
+  try{result=currentProblem.testFn(code);}
+  catch(e){result={pass:false,msg:'✗ Unexpected Error: '+e.message};}
+ 
+  outPre.innerHTML=`<span class="${result.pass?'output-pass':'output-fail'}">${result.msg}</span>`;
+ 
+  if(result.pass){
+    // Mark solved
+    if(!solvedProblems.includes(currentProblem.id)){
+      solvedProblems.push(currentProblem.id);
+      localStorage.setItem('aarambh_solved',JSON.stringify(solvedProblems));
+      document.getElementById('stat-solved').textContent=solvedProblems.length;
+      // Update weakness map
+      const qh=JSON.parse(localStorage.getItem('aarambh_quiz_history')||'{}');
+      if(!qh[currentProblem.topic]) qh[currentProblem.topic]={correct:0,total:0};
+      qh[currentProblem.topic].correct++;
+      qh[currentProblem.topic].total++;
+      localStorage.setItem('aarambh_quiz_history',JSON.stringify(qh));
+    }
+    renderTaskList();
+  } else {
+    // AI hint
+    hintPanel.style.display='block';
+    hintText.innerHTML='<span class="spinner-sm"></span>Getting AI hint...';
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',max_tokens:300,
+          messages:[{role:'user',content:`Problem: "${currentProblem.title}"\nDescription: ${currentProblem.desc}\n\nStudent's JavaScript code:\n\`\`\`javascript\n${code}\n\`\`\`\n\nTest result: ${result.msg}\n\nGive a 2-3 sentence hint pointing out the likely issue and guiding them toward the correct approach. Don't give the full solution. Be encouraging and clear. Plain text only.`}]
+        })
+      });
+      const data=await res.json();
+      hintText.textContent=data.content.map(c=>c.text||'').join('').trim();
+    }catch(e){hintPanel.style.display='none';}
+  }
+}
+ 
+initStats();
+renderTaskList();
+</script>
+</body>
+</html>

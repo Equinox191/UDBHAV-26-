@@ -1,0 +1,17 @@
+
+.meta { display: flex; justify-content: space-between; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted-fg); margin-bottom: 18px; }
+.meta strong { color: var(--marg); }
+.progress { height: 4px; background: var(--surface); border-radius: 999px; overflow:hidden; margin-bottom: 28px; }
+.progress > div { height:100%; background: var(--gradient-marg); width: 33%; }
+.q-card { border:1px solid var(--border); background: var(--surface); border-radius: 16px; padding: 28px; }
+.q-card h2 { font-size: 24px; font-weight: 600; margin-bottom: 24px; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 10px; border:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size: 14px; background: var(--bg); text-align: left; }
+.opt:hover { border-color: var(--marg); }
+.opt .badge { width: 24px; height: 24px; border-radius: 6px; border:1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.opt.correct { border-color: var(--marg); background: hsl(200 50% 30% / 0.1); color: var(--marg); }
+.opt.wrong { border-color: var(--destructive); background: hsl(0 55% 40% / 0.1); color: var(--destructive); }
+.feedback { margin-top: 24px; border:1px solid hsl(340 55% 38% / 0.3); background: hsl(340 55% 38% / 0.05); padding: 16px; border-radius: 10px; display: flex; gap: 12px; }
+.feedback strong { color: var(--disha); display:block; margin-bottom: 4px; }
+.feedback p { font-size: 14px; color: var(--muted-fg); }
+.actions { display:flex; justify-content: flex-end; margin-top: 24px; }

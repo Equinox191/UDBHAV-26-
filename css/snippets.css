@@ -1,0 +1,14 @@
+
+.search-bar { background: var(--surface); border:1px solid var(--border); border-radius: 14px; padding: 6px; display: flex; align-items: center; gap: 8px; margin-bottom: 28px; }
+.search-bar input { flex: 1; background: transparent; border: none; padding: 12px; font-size: 14px; color: var(--fg); }
+.search-bar input:focus { outline: none; }
+.snippets { display: flex; flex-direction: column; gap: 20px; }
+.snip { border:1px solid var(--border); background: var(--surface); border-radius: 16px; overflow: hidden; }
+.snip-head { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.snip-title { display: flex; align-items: center; gap: 12px; }
+.snip-title .name { font-family:'Fraunces',serif; font-weight: 600; font-size: 16px; }
+.snip-actions { display: flex; gap: 12px; }
+.snip-actions button { color: var(--muted-fg); font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
+.snip-actions button:hover { color: var(--gyan); }
+.snip pre { padding: 20px; font-family:'JetBrains Mono',monospace; font-size: 12px; background: var(--bg); overflow-x: auto; }
+.snip-tags { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }

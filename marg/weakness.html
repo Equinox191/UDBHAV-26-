@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Weak Areas · Aarambh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F3EE;--surface:#FFFFFF;--surface2:#F0EDE7;--border:#E0DBD1;
+  --fg:#1A1916;--muted:#8C8880;--marg:#4338CA;--marg2:#EEF2FF;
+  --green:#16A34A;--red:#DC2626;--amber:#D97706;
+  --sidebar:240px;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--serif:'Fraunces',serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);min-height:100vh;display:flex;overflow-x:hidden}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;overflow-y:auto}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:var(--fg);color:var(--surface);border-radius:8px;display:grid;place-items:center;font-family:var(--serif);font-size:15px;font-weight:700;flex-shrink:0}
+.logo-text .name{display:block;font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.1}
+.logo-text .sub{display:block;font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em}
+.sidebar-nav{flex:1;padding:12px 8px;overflow-y:auto}
+.nav-section{margin-bottom:20px}
+.nav-section-title{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.08em;padding:0 8px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.4}
+.nav-link{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;text-decoration:none;width:100%}
+.nav-link:hover{background:var(--surface2);color:var(--fg)}
+.nav-link.active{background:var(--marg2);color:var(--marg);font-weight:500}
+.nav-icon{width:15px;height:15px;stroke:currentColor;flex-shrink:0;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border)}
+.streak-card{background:var(--surface2);border-radius:10px;padding:10px 12px}
+.streak-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:4px}
+.streak-value{font-family:var(--serif);font-size:22px;font-weight:500}
+.streak-value span{font-size:13px;font-weight:400;color:var(--muted)}
+
+/* Main */
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;overflow-y:auto}
+.page-wrap{max-width:800px;margin:0 auto;padding:40px 32px 80px}
+.step-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:12px}
+.page-title{font-family:var(--serif);font-size:42px;font-weight:400;line-height:1.1;margin-bottom:8px}
+.page-title em{color:var(--marg);font-style:italic}
+.page-subtitle{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;border:1.5px solid var(--border);background:transparent;font-family:var(--font);font-size:13px;cursor:pointer;transition:all .15s;color:var(--fg);text-decoration:none}
+.btn:hover{border-color:var(--fg);background:var(--surface)}
+.btn-marg{background:var(--marg);color:#fff;border-color:var(--marg)}
+.btn-marg:hover{background:#3730A3;border-color:#3730A3;color:#fff}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-green{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* Insight card (now static) */
+.insight-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--marg);border-radius:12px;padding:18px 20px;margin-bottom:28px;font-size:13px;line-height:1.7}
+.insight-card strong{display:block;margin-bottom:10px;font-size:12px;font-family:var(--mono);color:var(--marg);letter-spacing:.04em}
+.insight-card .tips{display:flex;flex-direction:column;gap:8px}
+.tip-row{display:flex;gap:10px;align-items:flex-start}
+.tip-icon{flex-shrink:0;font-size:14px;margin-top:1px}
+.tip-text{font-size:13px;line-height:1.6;color:var(--fg)}
+.tip-topic{font-weight:600;color:var(--marg)}
+
+/* Weak grid */
+.weak-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.weak-grid{grid-template-columns:1fr}}
+.weak-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:0}
+.weak-card-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;margin-bottom:16px}
+.chip{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:8px}
+.chip-red{background:#FEF2F2;color:var(--red)}
+.chip-green{background:#F0FDF4;color:var(--green)}
+.chip-amber{background:#FFFBEB;color:var(--amber)}
+
+/* Topic entries */
+.topic-entry{margin-bottom:14px}
+.topic-entry:last-of-type{margin-bottom:20px}
+.topic-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px}
+.topic-name{font-weight:500}
+.topic-acc{font-family:var(--mono);font-weight:600}
+.bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.bar-inner{height:100%;border-radius:3px;transition:width .6s ease}
+.attempts-label{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px}
+
+/* Summary stats */
+.summary-stats{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.stat-card{flex:1;min-width:100px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center}
+.stat-val{font-family:var(--serif);font-size:28px;font-weight:500;line-height:1}
+.stat-lbl{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:4px}
+
+/* Empty */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+
+/* History */
+.history-section{margin-top:32px}
+.history-section h3{font-family:var(--serif);font-size:18px;font-weight:500;margin-bottom:16px}
+.history-table{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.history-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px}
+.history-row:last-child{border-bottom:none}
+.history-topic{flex:1;font-weight:500}
+.history-bar-wrap{flex:2;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.history-bar-inner{height:100%;border-radius:3px}
+.history-pct{min-width:36px;text-align:right;font-family:var(--mono);font-weight:600}
+
+/* Topic tips section */
+.topic-tips-section{margin-top:28px}
+.topic-tips-section h3{font-family:var(--serif);font-size:18px;font-weight:500;margin-bottom:16px}
+.tip-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.tip-card-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin-bottom:8px}
+.tip-card-body{font-size:12px;color:var(--muted);line-height:1.7}
+.tip-card-body strong{color:var(--fg)}
+
+.reset-btn{font-size:12px;padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;font-family:var(--font);color:var(--muted);transition:all .15s}
+.reset-btn:hover{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-mark">A</div>
+    <div class="logo-text">
+      <span class="name">Aarambh</span>
+      <span class="sub">tech · field guide</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Overview</div>
+      <a class="nav-link" href="../index.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot" style="background:var(--marg)"></span>Marg · Learn</div>
+      <a class="nav-link" href="tutor.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 8V4M5 12H2m20 0h-3M8 8h8a4 4 0 014 4v6H4v-6a4 4 0 014-4z"/></svg><span>AI Tutor</span>
+      </a>
+      <a class="nav-link" href="quiz.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8M4 12a8 8 0 1016 0 8 8 0 00-16 0z"/></svg><span>Coding Quiz</span>
+      </a>
+      <a class="nav-link active" href="weakness.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg><span>Weak Areas</span>
+      </a>
+      <a class="nav-link" href="practice.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 17l6-6-6-6m8 14h8"/></svg><span>Practice</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Gyan Sagar · Resources</div>
+      <a class="nav-link" href="../gyan/hub.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Resource Hub</span>
+      </a>
+      <a class="nav-link" href="../gyan/router.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span>Smart Router</span>
+      </a>
+      <a class="nav-link" href="../gyan/flashcards.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg><span>Flashcards</span>
+      </a>
+      <a class="nav-link" href="../gyan/snippets.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg><span>Notes & Snippets</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Disha · Career</div>
+      <a class="nav-link" href="../disha/career.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg><span>Career Suggest</span>
+      </a>
+      <a class="nav-link" href="../disha/path.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span>Learning Path</span>
+      </a>
+      <a class="nav-link" href="../disha/dashboard.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg><span>Progress</span>
+      </a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="streak-card">
+      <div class="streak-label"><span>Current streak</span>🔥</div>
+      <div class="streak-value" id="streak-val">0 <span>days</span></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="page-wrap">
+    <div class="step-label"></div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px">
+      <h1 class="page-title" style="margin-bottom:0">Your <em>Weakness Map</em></h1>
+      <button class="reset-btn" onclick="clearData()">↺ Reset Data</button>
+    </div>
+    <p class="page-subtitle">Auto-built from your quiz history. Fix the red, leverage the green.</p>
+
+    <div id="insight-area"></div>
+    <div id="map-content"></div>
+  </div>
+</div>
+
+<script>
+// ── STATIC TOPIC TIPS ────────────────────────────────────────────────────────
+const TOPIC_TIPS = {
+  "Arrays": {
+    icon: "📦",
+    focus: "Master two-pointer, sliding window, and prefix sum patterns.",
+    resources: "Practice: Two Sum, Best Time to Buy Stock, Maximum Subarray (LeetCode Easy→Medium).",
+    trick: "Whenever asked for a subarray with a constraint, think prefix sum + hash map first."
+  },
+  "Strings": {
+    icon: "🔤",
+    focus: "Focus on sliding window for substrings, and character frequency maps.",
+    resources: "Practice: Valid Anagram, Longest Substring Without Repeating Characters, Group Anagrams.",
+    trick: "For palindrome problems, try expanding around center — simpler than DP for most cases."
+  },
+  "Recursion": {
+    icon: "🔁",
+    focus: "Always define the base case first. Draw the recursion tree for complex problems.",
+    resources: "Practice: Fibonacci (with memo), Power(x,n), Subsets, Permutations.",
+    trick: "If recursion is too slow, add a memo dictionary — it instantly turns O(2^n) to O(n)."
+  },
+  "Dynamic Programming": {
+    icon: "🧩",
+    focus: "Start with the recursive brute force, then add memoization, then convert to tabulation.",
+    resources: "Practice in order: Climbing Stairs → Coin Change → Longest Common Subsequence → 0/1 Knapsack.",
+    trick: "Draw the DP table on paper first. Identify what dp[i] represents before coding."
+  },
+  "Time Complexity": {
+    icon: "⏱️",
+    focus: "Learn to identify loops, recursive calls, and apply the Master Theorem.",
+    resources: "Study: Big-O cheat sheet, Master Theorem cases, amortized analysis for dynamic arrays.",
+    trick: "Count nested loops → multiply. Count recursive depth → stack. Count both → T(n) = aT(n/b) + f(n)."
+  }
+};
+
+// ── STREAK ───────────────────────────────────────────────────────────────────
+(function(){
+  const today=new Date().toDateString();
+  let d=JSON.parse(localStorage.getItem('aarambh_streak')||'{"streak":0,"last":""}');
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  if(d.last===today){}
+  else if(d.last===yesterday){d.streak++;d.last=today;}
+  else{d.streak=1;d.last=today;}
+  localStorage.setItem('aarambh_streak',JSON.stringify(d));
+  document.getElementById('streak-val').innerHTML=d.streak+' <span>days</span>';
+})();
+
+function clearData(){
+  if(confirm('Reset all quiz history? This cannot be undone.')){
+    localStorage.removeItem('aarambh_quiz_history');
+    renderMap();
+  }
+}
+
+function generateInsight(history, weak, strong, mid){
+  const area = document.getElementById('insight-area');
+  if(Object.keys(history).length === 0){ area.innerHTML=''; return; }
+
+  let tips = [];
+
+  // Tip 1: priority
+  if(weak.length > 0){
+    const worstTopic = weak[0].topic;
+    const tip = TOPIC_TIPS[worstTopic];
+    tips.push({
+      icon: '🎯',
+      text: `<span class="tip-topic">${worstTopic}</span> needs the most attention (${weak[0].acc}% accuracy). ${tip ? tip.focus : 'Drill the fundamentals and solve 5–10 problems in this topic.'}`
+    });
+  } else if(mid.length > 0){
+    const t = mid[0];
+    tips.push({
+      icon: '🎯',
+      text: `You're close to mastering <span class="tip-topic">${t.topic}</span> (${t.acc}%). A few more focused practice sessions will push it into the green zone.`
+    });
+  } else {
+    tips.push({
+      icon: '🎯',
+      text: `Great accuracy across the board! Challenge yourself with hard-difficulty questions to reach true mastery.`
+    });
+  }
+
+  // Tip 2: technique
+  const allWeak = [...weak, ...mid];
+  if(allWeak.length > 0){
+    const t = allWeak[0].topic;
+    const tip = TOPIC_TIPS[t];
+    if(tip){
+      tips.push({ icon: '💡', text: `<strong>Pro tip for ${t}:</strong> ${tip.trick}` });
+    }
+  }
+
+  // Tip 3: encouragement from strong
+  if(strong.length > 0){
+    const topTopic = strong[0].topic;
+    tips.push({
+      icon: '✨',
+      text: `Your strongest area is <span class="tip-topic">${topTopic}</span> at ${strong[0].acc}% — that's a real interview asset. Keep it sharp while focusing on the weak zones.`
+    });
+  } else {
+    tips.push({
+      icon: '✨',
+      text: `You've attempted ${Object.keys(history).length} topic(s). Keep going — consistency beats cramming every time.`
+    });
+  }
+
+  area.innerHTML = `<div class="insight-card">
+    <strong>📊 Study Insight · Based on Your Results</strong>
+    <div class="tips">
+      ${tips.map(t=>`<div class="tip-row"><span class="tip-icon">${t.icon}</span><span class="tip-text">${t.text}</span></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderTopicTips(weakTopics){
+  if(weakTopics.length === 0) return '';
+  let html = `<div class="topic-tips-section">
+    <h3>Fix-It Guide · Weak Topics</h3>`;
+  for(const w of weakTopics){
+    const tip = TOPIC_TIPS[w.topic];
+    if(!tip) continue;
+    html += `<div class="tip-card">
+      <div class="tip-card-head">${tip.icon} ${w.topic} <span style="font-weight:400;color:var(--red);font-family:var(--mono);font-size:11px">${w.acc}%</span></div>
+      <div class="tip-card-body">
+        <strong>What to study:</strong> ${tip.focus}<br>
+        <strong>Where to practice:</strong> ${tip.resources}<br>
+        <strong>Quick trick:</strong> ${tip.trick}
+      </div>
+    </div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderMap(){
+  const history=JSON.parse(localStorage.getItem('aarambh_quiz_history')||'{}');
+  const content=document.getElementById('map-content');
+  document.getElementById('insight-area').innerHTML='';
+
+  if(Object.keys(history).length===0){
+    content.innerHTML=`<div class="empty-state">
+      <div style="font-size:48px;margin-bottom:12px">🗺️</div>
+      <p style="font-weight:600;margin-bottom:8px;font-family:var(--serif);font-size:18px">No quiz data yet</p>
+      <p style="font-size:13px;margin-bottom:20px">Take a quiz first — your weakness map auto-generates from your answers.</p>
+      <a class="btn btn-marg" href="quiz.html">Take a Quiz →</a>
+    </div>`;
+    return;
+  }
+
+  const weak=[],strong=[],mid=[];
+  let totalCorrect=0,totalAttempts=0;
+  for(const [topic,res] of Object.entries(history)){
+    const acc=Math.round((res.correct/res.total)*100);
+    const e={topic,acc,...res};
+    totalCorrect+=res.correct;totalAttempts+=res.total;
+    if(acc<50) weak.push(e);
+    else if(acc>=70) strong.push(e);
+    else mid.push(e);
+  }
+  weak.sort((a,b)=>a.acc-b.acc);
+  strong.sort((a,b)=>b.acc-a.acc);
+  mid.sort((a,b)=>a.acc-b.acc);
+
+  const overallAcc=totalAttempts>0?Math.round((totalCorrect/totalAttempts)*100):0;
+  const overallColor=overallAcc>=70?'var(--green)':overallAcc>=50?'var(--amber)':'var(--red)';
+
+  const topicBar=(t,color)=>`<div class="topic-entry">
+    <div class="topic-row">
+      <span class="topic-name">${t.topic}</span>
+      <span class="topic-acc" style="color:${color}">${t.acc}%</span>
+    </div>
+    <div class="bar"><div class="bar-inner" style="width:${t.acc}%;background:${color}"></div></div>
+    <div class="attempts-label">${t.total} attempts · ${t.correct} correct</div>
+  </div>`;
+
+  // Summary stats
+  let statsHtml=`<div class="summary-stats">
+    <div class="stat-card">
+      <div class="stat-val">${totalAttempts}</div>
+      <div class="stat-lbl">total questions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:${overallColor}">${overallAcc}%</div>
+      <div class="stat-lbl">overall accuracy</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--red)">${weak.length}</div>
+      <div class="stat-lbl">weak topics</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--green)">${strong.length}</div>
+      <div class="stat-lbl">strong topics</div>
+    </div>
+  </div>`;
+
+  // Rating badge
+  let badge='';
+  if(overallAcc>=80) badge='🏆 Excellent — placement ready!';
+  else if(overallAcc>=60) badge='📈 Good — keep grinding';
+  else if(overallAcc>=40) badge='⚡ Getting there — focus on weak areas';
+  else badge='🔥 Just starting — consistency is key';
+
+  let gridHtml='<div class="weak-grid">';
+  if(weak.length||mid.length){
+    const items=[...weak,...mid];
+    gridHtml+=`<div class="weak-card">
+      <div class="weak-card-head">⚠️ Needs Work
+        <span class="chip chip-red">priority</span>
+      </div>
+      ${items.map(t=>topicBar(t,t.acc<50?'var(--red)':'var(--amber)')).join('')}
+      <a class="btn btn-red" href="quiz.html" style="margin-top:4px">Quiz these topics →</a>
+    </div>`;
+  }
+  if(strong.length){
+    gridHtml+=`<div class="weak-card">
+      <div class="weak-card-head">✓ Strong Areas
+        <span class="chip chip-green">keep going</span>
+      </div>
+      ${strong.map(t=>topicBar(t,'var(--green)')).join('')}
+      <a class="btn btn-green" href="quiz.html" style="margin-top:4px">Push to mastery →</a>
+    </div>`;
+  }
+  gridHtml+='</div>';
+
+  // Full sorted table
+  const allSorted=Object.entries(history)
+    .map(([topic,res])=>({topic,acc:Math.round((res.correct/res.total)*100),...res}))
+    .sort((a,b)=>a.acc-b.acc);
+
+  let tableHtml=`<div class="history-section">
+    <h3>All Topics · Sorted by Accuracy</h3>
+    <div class="history-table">
+    ${allSorted.map(t=>{
+      const color=t.acc>=70?'var(--green)':t.acc>=50?'var(--amber)':'var(--red)';
+      return`<div class="history-row">
+        <span class="history-topic">${t.topic}</span>
+        <div class="history-bar-wrap"><div class="history-bar-inner" style="width:${t.acc}%;background:${color}"></div></div>
+        <span class="history-pct" style="color:${color}">${t.acc}%</span>
+        <span style="font-size:11px;color:var(--muted);font-family:var(--mono);min-width:60px;text-align:right">${t.correct}/${t.total}</span>
+      </div>`;
+    }).join('')}
+    </div>
+  </div>`;
+
+  // Topic fix-it guide for weak areas
+  const topicTipsHtml = renderTopicTips([...weak,...mid]);
+
+  content.innerHTML = `
+    <div style="font-size:12px;color:var(--muted);font-family:var(--mono);margin-bottom:20px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:inline-block">${badge}</div>
+    ${statsHtml}${gridHtml}${topicTipsHtml}${tableHtml}`;
+
+  generateInsight(history,weak,strong,mid);
+}
+
+renderMap();
+</script>
+</body>
+</html>

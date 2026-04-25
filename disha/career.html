@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Career Suggest · Aarambh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: hsl(36 30% 96%);
+  --fg: hsl(220 35% 12%);
+  --surface: hsl(36 25% 93%);
+  --surface-elev: #ffffff;
+  --card: #ffffff;
+  --primary: hsl(220 40% 16%);
+  --primary-fg: hsl(36 30% 96%);
+  --muted: hsl(36 18% 91%);
+  --muted-fg: hsl(220 12% 40%);
+  --border: hsl(36 18% 84%);
+  --accent: hsl(18 65% 42%);
+  --disha: hsl(340 55% 38%);
+  --gradient-disha: linear-gradient(135deg, hsl(340 55% 38%), hsl(340 55% 48%));
+  --shadow-card: 0 1px 2px hsl(220 30% 14% / 0.04), 0 2px 12px -6px hsl(220 30% 14% / 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(ellipse 90% 50% at 100% 0%, hsl(18 65% 42% / 0.05), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 0% 100%, hsl(200 50% 30% / 0.04), transparent 60%);
+  background-attachment: fixed;
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; background: none; border: none; color: inherit; }
+h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.015em; font-weight: 500; }
+
+/* Page layout */
+.page-wrap { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+.step-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted-fg); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 12px; }
+.page-title { font-size: clamp(28px, 5vw, 40px); font-weight: 600; line-height: 1.15; margin-bottom: 10px; }
+.page-title em.disha { font-style: italic; color: var(--disha); }
+.page-subtitle { font-size: 15px; color: var(--muted-fg); margin-bottom: 36px; }
+
+/* Dual grid */
+.dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 36px; }
+@media(max-width:700px){ .dual-grid { grid-template-columns: 1fr; } }
+
+.choice-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 20px 22px;
+}
+.mono-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted-fg);
+  margin-bottom: 12px;
+}
+.choice-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice-pill {
+  padding: 7px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted-fg);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.1s;
+}
+.choice-pill:hover { color: var(--fg); border-color: var(--disha); transform: translateY(-1px); }
+.choice-pill.active { background: var(--disha); color: white; border-color: var(--disha); }
+
+/* Recs header */
+.recs-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.recs-head h2 { font-size: 22px; font-weight: 700; }
+.recs-head .tag-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted-fg);
+  letter-spacing: 0.08em;
+  background: var(--muted);
+  padding: 4px 10px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+/* Rec grid */
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media(max-width:700px){ .rec-grid { grid-template-columns: 1fr; } }
+@media(max-width:900px) and (min-width:701px){ .rec-grid { grid-template-columns: 1fr 1fr; } }
+
+.rec-card {
+  border: 1px solid var(--border);
+  background: var(--surface-elev);
+  border-radius: 16px;
+  padding: 20px;
+  transition: border-color 0.2s, box-shadow 0.2s, opacity 0.3s, transform 0.3s;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.rec-card:hover { border-color: var(--disha); box-shadow: 0 4px 24px -8px hsl(340 55% 38% / 0.18); }
+.rec-card.exiting { opacity: 0; transform: translateY(8px); }
+.rec-card.entering { animation: cardIn 0.3s ease forwards; }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.briefcase { font-size: 22px; margin-bottom: 14px; }
+.rec-card h3 { font-size: 17px; font-weight: 600; margin-bottom: 3px; }
+.rec-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted-fg);
+  margin-bottom: 14px;
+}
+.rec-match { margin-bottom: 14px; }
+.rec-match .top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.rec-match .top .muted { color: var(--muted-fg); }
+.rec-match .top span:last-child { color: var(--disha); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.bar { height: 4px; background: var(--muted); border-radius: 99px; overflow: hidden; }
+.bar div { height: 100%; background: var(--gradient-disha); border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+
+.skill-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; flex: 1; }
+.chip {
+  padding: 3px 9px;
+  border-radius: 8px;
+  background: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted-fg);
+  letter-spacing: 0.04em;
+}
+.rec-card a {
+  color: var(--disha);
+  font-weight: 600;
+  font-size: 13px;
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.15s;
+}
+.rec-card a:hover { gap: 8px; }
+
+/* AI Explain button */
+.ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  color: var(--muted-fg);
+  cursor: pointer;
+  font-weight: 500;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.ai-btn:hover { border-color: var(--disha); color: var(--disha); background: hsl(340 55% 38% / 0.06); }
+.ai-btn svg { width: 13px; height: 13px; }
+
+/* AI explanation panel */
+.ai-panel {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: hsl(340 55% 38% / 0.06);
+  border: 1px solid hsl(340 55% 38% / 0.2);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--fg);
+  line-height: 1.55;
+  display: none;
+}
+.ai-panel.visible { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+.ai-panel .ai-loading { color: var(--muted-fg); font-style: italic; font-size: 12px; }
+
+/* Loading skeleton */
+.skeleton-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media(max-width:700px){ .skeleton-grid { grid-template-columns: 1fr; } }
+.skeleton-card {
+  border: 1px solid var(--border);
+  background: var(--surface-elev);
+  border-radius: 16px;
+  padding: 20px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.skel { background: var(--muted); border-radius: 6px; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--muted-fg);
+}
+.empty-state h3 { font-family: 'Fraunces', serif; font-size: 20px; margin-bottom: 8px; color: var(--fg); }
+.empty-state p { font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="step-label"></div>
+  <h1 class="page-title">Find your <em class="disha">direction</em></h1>
+  <p class="page-subtitle">Tell us what excites you. We'll match you to roles you can realistically aim for.</p>
+
+  <div class="dual-grid">
+    <div class="choice-card">
+      <div class="mono-label">your interest</div>
+      <div class="choice-row" id="interest-pills">
+        <button class="choice-pill active" data-value="Web">Web</button>
+        <button class="choice-pill" data-value="AI / ML">AI / ML</button>
+        <button class="choice-pill" data-value="Data">Data</button>
+        <button class="choice-pill" data-value="Mobile">Mobile</button>
+        <button class="choice-pill" data-value="DevOps">DevOps</button>
+        <button class="choice-pill" data-value="Cybersecurity">Cybersecurity</button>
+      </div>
+    </div>
+    <div class="choice-card">
+      <div class="mono-label">your skill level</div>
+      <div class="choice-row" id="level-pills">
+        <button class="choice-pill active" data-value="Beginner">Beginner</button>
+        <button class="choice-pill" data-value="Intermediate">Intermediate</button>
+        <button class="choice-pill" data-value="Advanced">Advanced</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="recs-head">
+    <h2>✦ Recommended for you</h2>
+    <span class="tag-label mono-label" id="active-tag">Web · Beginner</span>
+  </div>
+
+  <div id="rec-container"></div>
+</div>
+
+<script>
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const DATA = {
+  "Web": {
+    "Beginner":      [
+      { title:"Frontend Developer",   salary:"₹6–14 LPA",  match:92, tags:["React","TypeScript","CSS"],         icon:"💼", career:"frontend" },
+      { title:"UI/UX Developer",      salary:"₹5–12 LPA",  match:84, tags:["Figma","HTML/CSS","Accessibility"], icon:"🎨", career:"uiux" },
+      { title:"Full-Stack Developer", salary:"₹7–18 LPA",  match:76, tags:["Node","React","Postgres"],          icon:"🧩", career:"fullstack" },
+    ],
+    "Intermediate":  [
+      { title:"Full-Stack Developer",  salary:"₹10–22 LPA", match:90, tags:["Node","React","Postgres"],         icon:"🧩", career:"fullstack" },
+      { title:"Frontend Architect",    salary:"₹14–28 LPA", match:82, tags:["Performance","Design Systems","TS"],icon:"🏗️", career:"frontend-arch" },
+      { title:"Backend Developer",     salary:"₹9–20 LPA",  match:75, tags:["Node","REST","Postgres"],          icon:"⚙️", career:"backend" },
+    ],
+    "Advanced":      [
+      { title:"Engineering Manager",   salary:"₹25–55 LPA", match:88, tags:["Leadership","Roadmaps","OKRs"],    icon:"🚀", career:"em" },
+      { title:"Staff Engineer",        salary:"₹30–60 LPA", match:85, tags:["System Design","Mentorship","API"],icon:"🔬", career:"staff" },
+      { title:"Solutions Architect",   salary:"₹22–45 LPA", match:78, tags:["Cloud","Microservices","DevOps"],  icon:"🗺️", career:"sa" },
+    ],
+  },
+  "AI / ML": {
+    "Beginner":      [
+      { title:"ML Engineer",           salary:"₹8–18 LPA",  match:89, tags:["Python","scikit-learn","pandas"],  icon:"🤖", career:"ml" },
+      { title:"AI Product Manager",    salary:"₹10–22 LPA", match:80, tags:["Roadmapping","LLMs","A/B Testing"],icon:"📋", career:"aipm" },
+      { title:"Data Scientist",        salary:"₹7–16 LPA",  match:74, tags:["Python","SQL","Statistics"],       icon:"📊", career:"ds" },
+    ],
+    "Intermediate":  [
+      { title:"AI Engineer",           salary:"₹14–30 LPA", match:93, tags:["PyTorch","LLMs","Fine-tuning"],    icon:"⚡", career:"ai" },
+      { title:"MLOps Engineer",        salary:"₹12–25 LPA", match:84, tags:["Kubeflow","Docker","MLflow"],      icon:"🔄", career:"mlops" },
+      { title:"NLP Specialist",        salary:"₹13–28 LPA", match:77, tags:["BERT","Transformers","spaCy"],     icon:"🧠", career:"nlp" },
+    ],
+    "Advanced":      [
+      { title:"AI Research Scientist", salary:"₹25–65 LPA", match:91, tags:["Research","Publications","PhD"],   icon:"🔭", career:"ai-research" },
+      { title:"Principal AI Engineer", salary:"₹35–70 LPA", match:85, tags:["Architecture","Teams","Vision"],   icon:"🌟", career:"principal-ai" },
+      { title:"ML Platform Lead",      salary:"₹28–55 LPA", match:79, tags:["Infrastructure","GPUs","Scale"],   icon:"🛰️", career:"ml-platform" },
+    ],
+  },
+  "Data": {
+    "Beginner":      [
+      { title:"Data Analyst",          salary:"₹5–12 LPA",  match:90, tags:["SQL","Excel","Power BI"],          icon:"📈", career:"analyst" },
+      { title:"Business Analyst",      salary:"₹6–14 LPA",  match:82, tags:["SQL","Stakeholders","Dashboards"], icon:"📉", career:"ba" },
+      { title:"Data Engineer (Jr)",    salary:"₹7–15 LPA",  match:74, tags:["SQL","Python","ETL"],              icon:"🔧", career:"de-jr" },
+    ],
+    "Intermediate":  [
+      { title:"Data Engineer",         salary:"₹12–24 LPA", match:91, tags:["Spark","Kafka","dbt"],             icon:"🏭", career:"de" },
+      { title:"Analytics Engineer",    salary:"₹10–20 LPA", match:85, tags:["dbt","Looker","SQL"],              icon:"🔍", career:"ae" },
+      { title:"Data Scientist",        salary:"₹10–22 LPA", match:78, tags:["Python","ML","Statistics"],        icon:"📊", career:"ds" },
+    ],
+    "Advanced":      [
+      { title:"Data Architect",        salary:"₹22–45 LPA", match:88, tags:["Lakehouse","Governance","Cloud"],  icon:"🗄️", career:"da" },
+      { title:"Head of Data",          salary:"₹28–60 LPA", match:83, tags:["Strategy","Teams","OKRs"],         icon:"🎯", career:"hod" },
+      { title:"Staff Data Engineer",   salary:"₹25–50 LPA", match:77, tags:["Platform","Reliability","Scale"],  icon:"⚙️", career:"staff-de" },
+    ],
+  },
+  "Mobile": {
+    "Beginner":      [
+      { title:"Flutter Developer",     salary:"₹6–14 LPA",  match:88, tags:["Flutter","Dart","Firebase"],       icon:"📱", career:"flutter" },
+      { title:"React Native Dev",      salary:"₹6–13 LPA",  match:82, tags:["React Native","JS","Expo"],        icon:"⚛️", career:"rn" },
+      { title:"Android Developer",     salary:"₹7–15 LPA",  match:76, tags:["Kotlin","Jetpack","Android SDK"],  icon:"🤖", career:"android" },
+    ],
+    "Intermediate":  [
+      { title:"iOS Developer",         salary:"₹12–25 LPA", match:90, tags:["Swift","SwiftUI","CoreData"],      icon:"🍎", career:"ios" },
+      { title:"Mobile Architect",      salary:"₹14–28 LPA", match:83, tags:["Architecture","CI/CD","Testing"],  icon:"🏗️", career:"mobile-arch" },
+      { title:"Full-Stack Mobile",     salary:"₹13–26 LPA", match:77, tags:["Flutter","Node","Firebase"],       icon:"🌐", career:"fullstack-mobile" },
+    ],
+    "Advanced":      [
+      { title:"Mobile Platform Lead",  salary:"₹25–50 LPA", match:87, tags:["Teams","SDK","Strategy"],          icon:"🚀", career:"mobile-lead" },
+      { title:"Staff iOS Engineer",    salary:"₹28–55 LPA", match:82, tags:["Performance","SwiftUI","Vision"],  icon:"🌟", career:"staff-ios" },
+      { title:"Mobile Product Lead",   salary:"₹22–45 LPA", match:76, tags:["Product","Growth","Analytics"],    icon:"📋", career:"mobile-pm" },
+    ],
+  },
+  "DevOps": {
+    "Beginner":      [
+      { title:"DevOps Engineer",       salary:"₹7–16 LPA",  match:87, tags:["Linux","Docker","CI/CD"],          icon:"⚙️", career:"devops" },
+      { title:"Cloud Practitioner",    salary:"₹6–14 LPA",  match:80, tags:["AWS","GCP","Terraform"],           icon:"☁️", career:"cloud" },
+      { title:"Site Reliability Eng",  salary:"₹8–18 LPA",  match:74, tags:["Monitoring","Bash","K8s basics"],  icon:"🔍", career:"sre" },
+    ],
+    "Intermediate":  [
+      { title:"Platform Engineer",     salary:"₹14–28 LPA", match:91, tags:["K8s","Helm","Terraform"],          icon:"🏗️", career:"platform" },
+      { title:"SRE",                   salary:"₹15–30 LPA", match:85, tags:["SLOs","Observability","On-call"],  icon:"🚨", career:"sre-mid" },
+      { title:"Cloud Architect",       salary:"₹16–32 LPA", match:79, tags:["Multi-cloud","FinOps","Security"],  icon:"☁️", career:"cloud-arch" },
+    ],
+    "Advanced":      [
+      { title:"VP of Infrastructure",  salary:"₹40–80 LPA", match:89, tags:["Strategy","Cost","Reliability"],   icon:"🎯", career:"vp-infra" },
+      { title:"Principal SRE",         salary:"₹30–60 LPA", match:84, tags:["Chaos Eng","Architecture","SLOs"], icon:"🔬", career:"principal-sre" },
+      { title:"DevOps Consultant",     salary:"₹28–55 LPA", match:77, tags:["Advisory","Tooling","CI/CD"],      icon:"🤝", career:"devops-consultant" },
+    ],
+  },
+  "Cybersecurity": {
+    "Beginner":      [
+      { title:"Security Analyst",      salary:"₹6–14 LPA",  match:88, tags:["SOC","SIEM","Incident Response"],  icon:"🛡️", career:"sec-analyst" },
+      { title:"Ethical Hacker",        salary:"₹7–16 LPA",  match:81, tags:["Kali","Burp Suite","CTF"],         icon:"🎭", career:"pentest" },
+      { title:"IT Security Intern",    salary:"₹4–9 LPA",   match:75, tags:["Networking","CompTIA","Firewalls"], icon:"🔒", career:"sec-intern" },
+    ],
+    "Intermediate":  [
+      { title:"Penetration Tester",    salary:"₹12–25 LPA", match:92, tags:["OSCP","Web App","Network"],        icon:"🎯", career:"pentest-mid" },
+      { title:"AppSec Engineer",       salary:"₹13–26 LPA", match:85, tags:["SAST","DAST","Secure SDLC"],       icon:"🔐", career:"appsec" },
+      { title:"Cloud Security Eng",    salary:"₹14–28 LPA", match:79, tags:["IAM","Zero Trust","CSPM"],         icon:"☁️", career:"cloud-sec" },
+    ],
+    "Advanced":      [
+      { title:"CISO",                  salary:"₹45–100 LPA", match:87, tags:["GRC","Risk","Leadership"],        icon:"🏛️", career:"ciso" },
+      { title:"Security Architect",    salary:"₹30–65 LPA", match:83, tags:["Zero Trust","Architecture","IaC"], icon:"🗺️", career:"sec-arch" },
+      { title:"Red Team Lead",         salary:"₹28–55 LPA", match:78, tags:["APT","Adversarial","Threat Intel"],icon:"🔴", career:"red-team" },
+    ],
+  },
+};
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let selectedInterest = "Web";
+let selectedLevel    = "Beginner";
+const aiPanelStates  = {}; // track open ai panels
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+function init() {
+  bindPills("interest-pills", v => { selectedInterest = v; updateRecs(); });
+  bindPills("level-pills",    v => { selectedLevel    = v; updateRecs(); });
+  renderRecs();
+}
+
+function bindPills(containerId, onChange) {
+  const container = document.getElementById(containerId);
+  container.querySelectorAll(".choice-pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      container.querySelectorAll(".choice-pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      onChange(pill.dataset.value);
+    });
+  });
+}
+
+function updateRecs() {
+  document.getElementById("active-tag").textContent = `${selectedInterest} · ${selectedLevel}`;
+  renderRecs();
+}
+
+function renderRecs() {
+  const container = document.getElementById("rec-container");
+  const cards = DATA[selectedInterest]?.[selectedLevel] || [];
+
+  // Fade out
+  container.style.opacity = "0";
+  container.style.transform = "translateY(6px)";
+  container.style.transition = "opacity 0.2s, transform 0.2s";
+
+  setTimeout(() => {
+    if (cards.length === 0) {
+      container.innerHTML = `<div class="empty-state">
+        <h3>No matches yet</h3>
+        <p>Try a different combination of interest and skill level.</p>
+      </div>`;
+    } else {
+      container.innerHTML = `<div class="rec-grid">${cards.map((c, i) => cardHTML(c, i)).join("")}</div>`;
+      // bind AI buttons
+      container.querySelectorAll(".ai-btn").forEach(btn => {
+        btn.addEventListener("click", () => handleAI(btn));
+      });
+    }
+    container.style.opacity = "1";
+    container.style.transform = "translateY(0)";
+  }, 180);
+}
+
+function cardHTML(card, idx) {
+  const delay = idx * 60;
+  return `
+  <div class="rec-card entering" style="animation-delay:${delay}ms">
+    <div class="briefcase">${card.icon}</div>
+    <h3>${card.title}</h3>
+    <div class="rec-meta">${card.salary}</div>
+    <div class="rec-match">
+      <div class="top"><span class="muted">match</span><span>${card.match}%</span></div>
+      <div class="bar"><div style="width:${card.match}%"></div></div>
+    </div>
+    <div class="skill-tags">${card.tags.map(t => `<span class="chip">${t}</span>`).join("")}</div>
+    <a href="path.html?career=${card.career}">Build path →</a>
+    <button class="ai-btn" data-title="${card.title}" data-interest="${selectedInterest}" data-level="${selectedLevel}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg>
+      Why this role?
+    </button>
+    <div class="ai-panel" id="panel-${idx}"></div>
+  </div>`;
+}
+
+// ─── AI explain ───────────────────────────────────────────────────────────────
+async function handleAI(btn) {
+  const panelId = btn.nextElementSibling.id;
+  const panel   = document.getElementById(panelId);
+  const isOpen  = panel.classList.contains("visible");
+
+  // Toggle close
+  if (isOpen) {
+    panel.classList.remove("visible");
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg> Why this role?`;
+    return;
+  }
+
+  const title    = btn.dataset.title;
+  const interest = btn.dataset.interest;
+  const level    = btn.dataset.level;
+
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg> Loading…`;
+  btn.disabled  = true;
+
+  panel.innerHTML = `<span class="ai-loading">Thinking...</span>`;
+  panel.classList.add("visible");
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{
+          role: "user",
+          content: `You are a friendly career coach for Indian tech students. In 2-3 short sentences (max 60 words total), explain WHY "${title}" is a great match for someone interested in "${interest}" at a "${level}" skill level. Be specific, encouraging, and mention one concrete first step. No bullet points. Plain conversational text only.`
+        }]
+      })
+    });
+
+    const data   = await res.json();
+    const text   = data?.content?.[0]?.text || "Couldn't load explanation — try again!";
+    panel.textContent = text;
+  } catch(e) {
+    panel.textContent = "Couldn't reach the AI right now. You've got great taste in roles though! 🚀";
+  }
+
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg> Hide`;
+  btn.disabled  = false;
+}
+
+init();
+</script>
+</body>
+</html>

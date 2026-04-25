@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Resource Hub · Aarambh</title>
+<meta name="description" content="Curated tutorials, articles and videos arranged by topic and skill level." />
+<meta property="og:title" content="Resource Hub · Aarambh" />
+<meta property="og:description" content="Curated tutorials, articles and videos arranged by topic and skill level." />
+<link rel="stylesheet" href="../css/shared.css">
+<link rel="stylesheet" href="../css/hub.css">
+<style>
+  .topic-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px; }
+  .topic-chip {
+    padding:6px 14px; border-radius:999px;
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    text-transform:uppercase; letter-spacing:0.12em; font-weight:500;
+    border:1px solid var(--border); color:var(--muted-fg); background:var(--surface);
+    cursor:pointer; transition:all 0.15s;
+  }
+  .topic-chip:hover { border-color:var(--gyan); color:var(--gyan); }
+  .topic-chip.active { background:var(--gyan); color:#fff; border-color:var(--gyan); }
+
+  .topic-section { margin-bottom:40px; }
+  .topic-section[data-hidden="true"] { display:none; }
+  .tab-panel[data-hidden="true"] { display:none; }
+
+  .topic-section-header {
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:18px; padding-bottom:10px;
+    border-bottom:1px solid var(--border);
+  }
+  .topic-section-icon {
+    width:32px; height:32px; border-radius:8px;
+    background:var(--gradient-gyan);
+    display:flex; align-items:center; justify-content:center; font-size:16px;
+  }
+  .topic-section-title { font-family:'Fraunces',serif; font-size:20px; font-weight:600; }
+  .topic-section-count {
+    margin-left:auto; font-family:'JetBrains Mono',monospace;
+    font-size:11px; text-transform:uppercase; letter-spacing:0.14em; color:var(--muted-fg);
+  }
+
+  .res-card a.open-link {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:6px 12px; font-size:12px; font-weight:500;
+    border-radius:6px; border:1px solid var(--border);
+    background:var(--surface); color:var(--fg);
+    transition:all 0.15s; text-decoration:none; cursor:pointer;
+  }
+  .res-card a.open-link:hover { border-color:var(--gyan); color:var(--gyan); background:hsl(32 70% 40% / 0.06); }
+  .res-card button.save-btn {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:6px 12px; font-size:12px; font-weight:500;
+    border-radius:6px; border:1px solid var(--border);
+    background:var(--surface); color:var(--muted-fg); transition:all 0.15s;
+  }
+  .res-card button.save-btn:hover { color:var(--gyan); border-color:var(--gyan); }
+  .res-card button.save-btn.saved { color:var(--gyan); border-color:var(--gyan); background:hsl(32 70% 40% / 0.08); }
+
+  .res-type-badge {
+    font-family:'JetBrains Mono',monospace; font-size:9px;
+    text-transform:uppercase; letter-spacing:0.15em;
+    padding:3px 8px; border-radius:4px; font-weight:500;
+  }
+  .badge-video   { background:hsl(0 65% 40% / 0.1); color:hsl(0 65% 40%); }
+  .badge-article { background:hsl(200 50% 30% / 0.1); color:var(--marg); }
+  .badge-platform{ background:hsl(32 70% 40% / 0.1); color:var(--gyan); }
+  .badge-course  { background:hsl(340 55% 38% / 0.1); color:var(--disha); }
+  .badge-free    { background:hsl(120 40% 30% / 0.1); color:hsl(120 40% 30%); }
+
+  .search-bar {
+    display:flex; align-items:center; gap:10px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:10px 14px; margin-bottom:20px;
+    transition:border-color 0.15s;
+  }
+  .search-bar:focus-within { border-color:var(--gyan); }
+  .search-bar input { flex:1; background:none; border:none; outline:none; font-size:14px; color:var(--fg); }
+  .search-bar input::placeholder { color:var(--muted-fg); }
+  .search-icon { color:var(--muted-fg); }
+
+  .badges-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-mark">A</div>
+      <div class="logo-text">
+        <span class="name">Aarambh</span>
+        <span class="sub">tech · field guide</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section core">
+        <div class="nav-section-title"><span class="dot"></span>Overview</div>
+        <a class="nav-link" href="../index.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+          <span>Home</span>
+        </a>
+      </div>
+      <div class="nav-section marg">
+        <div class="nav-section-title"><span class="dot"></span>Marg · Learn</div>
+        <a class="nav-link" href="../marg/tutor.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4M5 12H2m20 0h-3M8 8h8a4 4 0 014 4v6H4v-6a4 4 0 014-4z"/></svg>
+          <span>AI Tutor</span>
+        </a>
+        <a class="nav-link" href="../marg/quiz.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8M4 12a8 8 0 1016 0 8 8 0 00-16 0z"/></svg>
+          <span>Coding Quiz</span>
+        </a>
+        <a class="nav-link" href="../marg/weakness.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg>
+          <span>Weak Areas</span>
+        </a>
+        <a class="nav-link" href="../marg/practice.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6-6-6m8 14h8"/></svg>
+          <span>Practice</span>
+        </a>
+      </div>
+      <div class="nav-section gyan">
+        <div class="nav-section-title"><span class="dot"></span>Gyan Sagar · Resources</div>
+        <a class="nav-link active" href="../gyan/hub.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <span>Resource Hub</span>
+        </a>
+        <a class="nav-link" href="../gyan/router.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+          <span>Smart Router</span>
+        </a>
+        <a class="nav-link" href="../gyan/snippets.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+          <span>Notes &amp; Snippets</span>
+        </a>
+      </div>
+      <div class="nav-section disha">
+        <div class="nav-section-title"><span class="dot"></span>Disha · Career</div>
+        <a class="nav-link" href="../disha/career.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg>
+          <span>Career Suggest</span>
+        </a>
+        <a class="nav-link" href="../disha/path.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+          <span>Learning Path</span>
+        </a>
+        <a class="nav-link" href="../disha/dashboard.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg>
+          <span>Progress</span>
+        </a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="streak-card">
+        <div class="streak-label"><span>Current streak</span></div>
+        <div class="streak-value"><span id="streak-value">12</span> <span>days</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div id="sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:4;transition:opacity 0.2s"></div>
+    <div class="mobile-bar">
+      <strong style="font-family:'Fraunces',serif">Aarambh</strong>
+      <button aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">☰ Menu</button>
+    </div>
+
+    <div class="page-wrap">
+      <div class="step-label"></div>
+      <h1 class="page-title">The <em class="gyan">resource hub</em></h1>
+      <p class="page-subtitle">Curated tutorials, notes and platforms. Surfaced by topic and skill level.</p>
+
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Search resources — e.g. React, DSA, Python…" />
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="tutorials">Tutorials</button>
+        <button class="tab" data-tab="notes">Notes &amp; Docs</button>
+        <button class="tab" data-tab="platforms">Practice Platforms</button>
+      </div>
+
+      <!-- ═══ TUTORIALS ═══════════════════════════════════════ -->
+      <div class="tab-panel" id="tab-tutorials">
+        <div class="topic-filters">
+          <button class="topic-chip active" data-filter="all">All Topics</button>
+          <button class="topic-chip" data-filter="javascript">JavaScript</button>
+          <button class="topic-chip" data-filter="python">Python</button>
+          <button class="topic-chip" data-filter="dsa">DSA</button>
+          <button class="topic-chip" data-filter="react">React</button>
+          <button class="topic-chip" data-filter="webdev">Web Dev</button>
+          <button class="topic-chip" data-filter="git">Git &amp; DevOps</button>
+          <button class="topic-chip" data-filter="cs">CS Fundamentals</button>
+        </div>
+
+        <!-- JavaScript -->
+        <div class="topic-section" data-topic="javascript">
+          <div class="topic-section-header">
+            <div class="topic-section-icon">🟨</div>
+            <span class="topic-section-title">JavaScript</span>
+            <span class="topic-section-count">4 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>JavaScript Crash Course 2025</h3>
+                  <div class="res-meta">freeCodeCamp · youtube · 4h 12m</div>
+                  <div class="badges-row"><span class="res-type-badge badge-video">Video</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.youtube.com/watch?v=jS4aFq5-91M" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Namaste JavaScript (Season 1 &amp; 2)</h3>
+                  <div class="res-meta">Akshay Saini · youtube · 30h+</div>
+                  <div class="badges-row"><span class="res-type-badge badge-video">Video</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.youtube.com/playlist?list=PLlasXeu85E9cQ32gLCvAvr9vNaUccPVNP" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>JavaScript.info — Modern JS Tutorial</h3>
+                  <div class="res-meta">javascript.info · web · comprehensive</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Article</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://javascript.info/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>MDN JavaScript Guide</h3>
+                  <div class="res-meta">MDN Web Docs · docs · always updated</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Docs</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Python -->
+        <div class="topic-section" data-topic="python">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,#3776ab,#ffd43b)">🐍</div>
+            <span class="topic-section-title">Python</span>
+            <span class="topic-section-count">4 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Python for Beginners — Full Course</h3>
+                  <div class="res-meta">freeCodeCamp · youtube · 4h 27m</div>
+                  <div class="badges-row"><span class="res-type-badge badge-video">Video</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.youtube.com/watch?v=rfscVS0vtbw" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Automate the Boring Stuff with Python</h3>
+                  <div class="res-meta">Al Sweigart · web book · beginner–mid</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Book</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Official Python Tutorial</h3>
+                  <div class="res-meta">python.org · docs · v3.12+</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Docs</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>100 Days of Code — Python Bootcamp</h3>
+                  <div class="res-meta">Angela Yu · Udemy · 60h</div>
+                  <div class="badges-row"><span class="res-type-badge badge-course">Course</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.udemy.com/course/100-days-of-code/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DSA -->
+        <div class="topic-section" data-topic="dsa">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,hsl(200 50% 30%),hsl(200 45% 45%))">🧮</div>
+            <span class="topic-section-title">Data Structures &amp; Algorithms</span>
+            <span class="topic-section-count">4 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Striver's A2Z DSA Sheet</h3>
+                  <div class="res-meta">TakeUForward · web · structured sheet</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>DSA in JS — Full Series by Striver</h3>
+                  <div class="res-meta">Striver · youtube · 35h</div>
+                  <div class="badges-row"><span class="res-type-badge badge-video">Video</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.youtube.com/playlist?list=PLgUwDviBIf0oF6QL8m22w1hIDC1vJ_BHz" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>NeetCode.io — Blind 75 + Roadmap</h3>
+                  <div class="res-meta">NeetCode · web · problems + video</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://neetcode.io/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Visualgo — Algorithm Visualizer</h3>
+                  <div class="res-meta">visualgo.net · interactive · great for intuition</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Interactive</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://visualgo.net/en" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- React -->
+        <div class="topic-section" data-topic="react">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,#20232a,#61dafb)">⚛</div>
+            <span class="topic-section-title">React</span>
+            <span class="topic-section-count">3 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>React Hooks Deep Dive</h3>
+                  <div class="res-meta">Fireship · youtube · 18m</div>
+                  <div class="badges-row"><span class="res-type-badge badge-video">Video</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.youtube.com/watch?v=TNhaISOUy6Q" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Official React Docs — react.dev</h3>
+                  <div class="res-meta">Meta · docs · always updated</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Docs</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://react.dev/learn" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>React Full Course — Chai aur Code</h3>
+                  <div class="res-meta">Hitesh Choudhary · youtube · 12h</div>
+                  <div class="badges-row"><span class="res-type-badge badge-video">Video</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.youtube.com/playlist?list=PLu71SKxNbfoDqgPchmvIsL4hTnJIrtige" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Web Dev -->
+        <div class="topic-section" data-topic="webdev">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,#e44d26,#264de4)">🌐</div>
+            <span class="topic-section-title">Web Development</span>
+            <span class="topic-section-count">3 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>The Odin Project — Full Stack Path</h3>
+                  <div class="res-meta">theodinproject.com · full curriculum</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.theodinproject.com/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>TypeScript for Beginners</h3>
+                  <div class="res-meta">Net Ninja · youtube · 2h 40m</div>
+                  <div class="badges-row"><span class="res-type-badge badge-video">Video</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9gUgr39Q_yD6v-bSyMwKPUI" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>CSS Tricks — Guide to Flexbox</h3>
+                  <div class="res-meta">CSS-Tricks · article · essential reference</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Article</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Git & DevOps -->
+        <div class="topic-section" data-topic="git">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,#f05032,#c0392b)">🔧</div>
+            <span class="topic-section-title">Git &amp; DevOps</span>
+            <span class="topic-section-count">3 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Git &amp; GitHub Crash Course</h3>
+                  <div class="res-meta">Traversy Media · youtube · 1h 8m</div>
+                  <div class="badges-row"><span class="res-type-badge badge-video">Video</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.youtube.com/watch?v=SWYqp7iY_Tc" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Learn Git Branching — Interactive</h3>
+                  <div class="res-meta">learngitbranching.js.org · interactive</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Interactive</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://learngitbranching.js.org/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Pro Git — Free Book</h3>
+                  <div class="res-meta">git-scm.com · book · comprehensive</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Book</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://git-scm.com/book/en/v2" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CS Fundamentals -->
+        <div class="topic-section" data-topic="cs">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,hsl(340 55% 38%),hsl(340 55% 52%))">💡</div>
+            <span class="topic-section-title">CS Fundamentals</span>
+            <span class="topic-section-count">3 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>CS50x — Harvard Intro to CS</h3>
+                  <div class="res-meta">Harvard / edX · course · ~12 weeks</div>
+                  <div class="badges-row"><span class="res-type-badge badge-course">Course</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://cs50.harvard.edu/x/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Teach Yourself CS — Curriculum Guide</h3>
+                  <div class="res-meta">teachyourselfcs.com · guide · self-paced</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Guide</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://teachyourselfcs.com/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Big-O Cheat Sheet</h3>
+                  <div class="res-meta">bigocheatsheet.com · reference · complexity</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Cheatsheet</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.bigocheatsheet.com/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-tutorials -->
+
+      <!-- ═══ NOTES & DOCS ════════════════════════════════════ -->
+      <div class="tab-panel" id="tab-notes" data-hidden="true">
+        <div class="topic-filters">
+          <button class="topic-chip active" data-filter="all">All</button>
+          <button class="topic-chip" data-filter="javascript">JavaScript</button>
+          <button class="topic-chip" data-filter="python">Python</button>
+          <button class="topic-chip" data-filter="webdev">Web Dev</button>
+          <button class="topic-chip" data-filter="cs">CS Fundamentals</button>
+        </div>
+
+        <div class="topic-section" data-topic="javascript">
+          <div class="topic-section-header">
+            <div class="topic-section-icon">🟨</div>
+            <span class="topic-section-title">JavaScript References</span>
+            <span class="topic-section-count">2 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>MDN JavaScript Reference</h3>
+                  <div class="res-meta">MDN · docs · always updated</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Docs</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>DevDocs — Offline Docs for Everything</h3>
+                  <div class="res-meta">devdocs.io · multi-language · reference</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Docs</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://devdocs.io/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="topic-section" data-topic="python">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,#3776ab,#ffd43b)">🐍</div>
+            <span class="topic-section-title">Python References</span>
+            <span class="topic-section-count">2 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Python Official Docs</h3>
+                  <div class="res-meta">python.org · docs · v3.12+</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Docs</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://docs.python.org/3/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Real Python — Practical Articles</h3>
+                  <div class="res-meta">realpython.com · articles · hands-on</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Article</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://realpython.com/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="topic-section" data-topic="webdev">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,#e44d26,#264de4)">🌐</div>
+            <span class="topic-section-title">Web Dev References</span>
+            <span class="topic-section-count">2 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>web.dev — Google Web Standards</h3>
+                  <div class="res-meta">Google · web · performance &amp; best practices</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Guide</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://web.dev/learn" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Can I Use — Browser Compatibility</h3>
+                  <div class="res-meta">caniuse.com · CSS &amp; HTML features</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Tool</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://caniuse.com/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="topic-section" data-topic="cs">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,hsl(340 55% 38%),hsl(340 55% 52%))">💡</div>
+            <span class="topic-section-title">CS Fundamentals Refs</span>
+            <span class="topic-section-count">2 resources</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Refactoring Guru — Design Patterns</h3>
+                  <div class="res-meta">refactoring.guru · patterns catalog</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Guide</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://refactoring.guru/design-patterns" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>OS: Three Easy Pieces (OSTEP)</h3>
+                  <div class="res-meta">ostep · free book · OS internals</div>
+                  <div class="badges-row"><span class="res-type-badge badge-article">Book</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tab-notes -->
+
+      <!-- ═══ PRACTICE PLATFORMS ══════════════════════════════ -->
+      <div class="tab-panel" id="tab-platforms" data-hidden="true">
+        <div class="topic-filters">
+          <button class="topic-chip active" data-filter="all">All</button>
+          <button class="topic-chip" data-filter="dsa">DSA / Interviews</button>
+          <button class="topic-chip" data-filter="webdev">Web Dev</button>
+          <button class="topic-chip" data-filter="cs">Competitive</button>
+        </div>
+
+        <div class="topic-section" data-topic="dsa">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,hsl(200 50% 30%),hsl(200 45% 45%))">🧮</div>
+            <span class="topic-section-title">DSA &amp; Interview Prep</span>
+            <span class="topic-section-count">4 platforms</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>LeetCode</h3>
+                  <div class="res-meta">leetcode.com · 3000+ problems · FAANG prep</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free tier</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://leetcode.com/problemset/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>GeeksforGeeks</h3>
+                  <div class="res-meta">gfg · articles + practice · huge content</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.geeksforgeeks.org/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>HackerRank</h3>
+                  <div class="res-meta">hackerrank.com · challenges + certificates</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.hackerrank.com/dashboard" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>InterviewBit</h3>
+                  <div class="res-meta">interviewbit.com · structured roadmaps</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.interviewbit.com/practice/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="topic-section" data-topic="webdev">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,#e44d26,#264de4)">🌐</div>
+            <span class="topic-section-title">Web Dev Practice</span>
+            <span class="topic-section-count">3 platforms</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>freeCodeCamp</h3>
+                  <div class="res-meta">freecodecamp.org · full curriculum + certs</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.freecodecamp.org/learn" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Frontend Mentor</h3>
+                  <div class="res-meta">frontendmentor.io · real-world challenges</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free tier</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.frontendmentor.io/challenges" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>CSS Battle</h3>
+                  <div class="res-meta">cssbattle.dev · css challenges · fun</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://cssbattle.dev/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="topic-section" data-topic="cs">
+          <div class="topic-section-header">
+            <div class="topic-section-icon" style="background:linear-gradient(135deg,hsl(340 55% 38%),hsl(340 55% 52%))">🏆</div>
+            <span class="topic-section-title">Competitive Programming</span>
+            <span class="topic-section-count">3 platforms</span>
+          </div>
+          <div class="res-grid">
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>CodeChef</h3>
+                  <div class="res-meta">codechef.com · contests + ICPC · India-friendly</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+                <span class="chip gyan">★ best for you</span>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://www.codechef.com/practice" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>Codeforces</h3>
+                  <div class="res-meta">codeforces.com · weekly contests · CP community</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://codeforces.com/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+            <div class="res-card">
+              <div class="res-head">
+                <div>
+                  <h3>AtCoder</h3>
+                  <div class="res-meta">atcoder.jp · high-quality weekly contests</div>
+                  <div class="badges-row"><span class="res-type-badge badge-platform">Platform</span><span class="res-type-badge badge-free">Free</span></div>
+                </div>
+              </div>
+              <div class="res-actions">
+                <a class="open-link" href="https://atcoder.jp/" target="_blank" rel="noopener">↗ Open</a>
+                <button class="save-btn" onclick="toggleSave(this)">☆ Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-platforms -->
+
+      <div class="cta-band">
+        <div>
+          <h3>Need topic-specific picks?</h3>
+          <p>Use the Smart Router to get the best resource for what you're learning right now.</p>
+        </div>
+        <a class="btn btn-gyan" href="router.html">Open Smart Router</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/shared.js"></script>
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.dataset.hidden = p.id !== 'tab-' + target ? 'true' : 'false';
+      });
+      const panel = document.getElementById('tab-' + target);
+      panel.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('active'));
+      const allChip = panel.querySelector('[data-filter="all"]');
+      if (allChip) allChip.classList.add('active');
+      panel.querySelectorAll('.topic-section').forEach(s => s.dataset.hidden = 'false');
+      document.getElementById('search-input').value = '';
+      panel.querySelectorAll('.res-card').forEach(c => c.style.display = '');
+    });
+  });
+
+  // Topic filter chips
+  document.addEventListener('click', e => {
+    if (!e.target.matches('.topic-chip')) return;
+    const chip = e.target;
+    const panel = chip.closest('.tab-panel');
+    panel.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const filter = chip.dataset.filter;
+    panel.querySelectorAll('.topic-section').forEach(s => {
+      s.dataset.hidden = (filter === 'all' || s.dataset.topic === filter) ? 'false' : 'true';
+    });
+  });
+
+  // Save toggle
+  function toggleSave(btn) {
+    btn.classList.toggle('saved');
+    btn.textContent = btn.classList.contains('saved') ? '★ Saved' : '☆ Save';
+  }
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase().trim();
+    const activePanel = document.querySelector('.tab-panel:not([data-hidden="true"])');
+    if (!activePanel) return;
+    activePanel.querySelectorAll('.res-card').forEach(card => {
+      card.style.display = (!q || card.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    });
+    activePanel.querySelectorAll('.topic-section').forEach(s => {
+      const hasVisible = [...s.querySelectorAll('.res-card')].some(c => c.style.display !== 'none');
+      s.dataset.hidden = hasVisible ? 'false' : 'true';
+    });
+    if (q) activePanel.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('active'));
+  });
+</script>
+</body>
+</html>

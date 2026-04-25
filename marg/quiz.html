@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Quiz · Aarambh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F3EE;--surface:#FFFFFF;--surface2:#F0EDE7;--border:#E0DBD1;
+  --fg:#1A1916;--muted:#8C8880;--marg:#4338CA;--marg2:#EEF2FF;
+  --green:#16A34A;--red:#DC2626;--amber:#D97706;
+  --sidebar:240px;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--serif:'Fraunces',serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);min-height:100vh;display:flex;overflow-x:hidden}
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;overflow-y:auto}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:var(--fg);color:var(--surface);border-radius:8px;display:grid;place-items:center;font-family:var(--serif);font-size:15px;font-weight:700;flex-shrink:0}
+.logo-text .name{display:block;font-family:var(--serif);font-size:15px;font-weight:500;line-height:1.1}
+.logo-text .sub{display:block;font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em}
+.sidebar-nav{flex:1;padding:12px 8px;overflow-y:auto}
+.nav-section{margin-bottom:20px}
+.nav-section-title{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.08em;padding:0 8px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.4}
+.nav-link{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;text-decoration:none;width:100%}
+.nav-link:hover{background:var(--surface2);color:var(--fg)}
+.nav-link.active{background:var(--marg2);color:var(--marg);font-weight:500}
+.nav-icon{width:15px;height:15px;stroke:currentColor;flex-shrink:0;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border)}
+.streak-card{background:var(--surface2);border-radius:10px;padding:10px 12px}
+.streak-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:var(--mono);margin-bottom:4px}
+.streak-value{font-family:var(--serif);font-size:22px;font-weight:500}
+.streak-value span{font-size:13px;font-weight:400;color:var(--muted)}
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;overflow-y:auto}
+.page-wrap{max-width:640px;margin:0 auto;padding:40px 32px 80px}
+.step-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:12px}
+.page-title{font-family:var(--serif);font-size:42px;font-weight:400;line-height:1.1;margin-bottom:8px}
+.page-title em{color:var(--marg);font-style:italic}
+.page-subtitle{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;border:1.5px solid var(--border);background:transparent;font-family:var(--font);font-size:13px;cursor:pointer;transition:all .15s;color:var(--fg);text-decoration:none}
+.btn:hover{border-color:var(--fg);background:var(--surface)}
+.btn-marg{background:var(--marg);color:#fff;border-color:var(--marg)}
+.btn-marg:hover{background:#3730A3;border-color:#3730A3;color:#fff}
+.topic-selector{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 24px}
+.topic-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:transparent;cursor:pointer;font-size:12px;font-family:var(--font);transition:all .15s;color:var(--fg)}
+.topic-btn.selected{background:var(--marg);color:#fff;border-color:var(--marg)}
+.topic-btn:hover:not(.selected){border-color:var(--marg);color:var(--marg)}
+.row-btns{display:flex;gap:8px;margin:12px 0 20px;flex-wrap:wrap}
+.row-btn{flex:1;min-width:70px;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;cursor:pointer;font-size:12px;font-family:var(--font);text-align:center;transition:all .15s}
+.row-btn.selected{border-color:var(--marg);background:var(--marg2);color:var(--marg)}
+.row-btn:hover:not(.selected){border-color:var(--marg);color:var(--marg)}
+.section-h{font-family:var(--serif);font-size:16px;font-weight:500;margin:20px 0 4px}
+.section-sub{font-size:12px;color:var(--muted);margin-bottom:0}
+.err-msg{color:var(--red);font-size:12px;margin-top:8px;font-family:var(--mono)}
+.progress-bar-wrap{height:4px;background:var(--border);border-radius:2px;margin:10px 0 18px}
+.progress-bar{height:100%;background:var(--marg);border-radius:2px;transition:width .3s ease}
+.meta-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.q-meta{font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}
+.q-text{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.4;margin-bottom:20px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--font);font-size:13px;background:transparent;cursor:pointer;transition:all .15s;text-align:left;width:100%;color:var(--fg)}
+.opt:hover:not(:disabled){border-color:var(--marg);background:var(--marg2)}
+.opt:disabled{cursor:default}
+.opt.correct{border-color:var(--green)!important;background:#F0FDF4!important;color:#14532D}
+.opt.wrong{border-color:var(--red)!important;background:#FEF2F2!important;color:#7F1D1D}
+.badge{min-width:22px;height:22px;border-radius:6px;background:var(--surface2);display:grid;place-items:center;font-size:11px;font-weight:500;font-family:var(--mono);flex-shrink:0}
+.feedback{display:none;margin:16px 0;padding:14px 16px;border-radius:10px;background:var(--surface2);font-size:13px;gap:10px;align-items:flex-start;line-height:1.6}
+.feedback.show{display:flex}
+.feedback.correct-fb{background:#F0FDF4;border-left:3px solid var(--green)}
+.feedback.wrong-fb{background:#FEF2F2;border-left:3px solid var(--red)}
+.results-card{text-align:center;padding:40px 28px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.results-score{font-size:72px;font-family:var(--serif);line-height:1}
+.results-breakdown{display:flex;gap:24px;justify-content:center;margin:24px 0}
+.rb-item{text-align:center}
+.rb-val{font-size:28px;font-weight:600;font-family:var(--serif)}
+.rb-lbl{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.code-q{background:#1C1C1E;color:#E5E5E5;border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:12px;margin:8px 0 16px;overflow-x:auto;white-space:pre;line-height:1.6}
+.topic-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-family:var(--mono);background:var(--marg2);color:var(--marg);margin-bottom:16px}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-mark">A</div>
+    <div class="logo-text">
+      <span class="name">Aarambh</span>
+      <span class="sub">tech · field guide</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Overview</div>
+      <a class="nav-link" href="../index.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot" style="background:var(--marg)"></span>Marg · Learn</div>
+      <a class="nav-link" href="tutor.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 8V4M5 12H2m20 0h-3M8 8h8a4 4 0 014 4v6H4v-6a4 4 0 014-4z"/></svg><span>AI Tutor</span>
+      </a>
+      <a class="nav-link active" href="quiz.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8M4 12a8 8 0 1016 0 8 8 0 00-16 0z"/></svg><span>Coding Quiz</span>
+      </a>
+      <a class="nav-link" href="weakness.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.7 3.86a2 2 0 00-3.4 0z"/></svg><span>Weak Areas</span>
+      </a>
+      <a class="nav-link" href="practice.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 17l6-6-6-6m8 14h8"/></svg><span>Practice</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Gyan Sagar · Resources</div>
+      <a class="nav-link" href="../gyan/hub.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Resource Hub</span>
+      </a>
+      <a class="nav-link" href="../gyan/router.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span>Smart Router</span>
+      </a>
+      <a class="nav-link" href="../gyan/flashcards.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z"/></svg><span>Flashcards</span>
+      </a>
+      <a class="nav-link" href="../gyan/snippets.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg><span>Notes & Snippets</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title"><span class="dot"></span>Disha · Career</div>
+      <a class="nav-link" href="../disha/career.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm3 7l-4 8-4-4 8-4z"/></svg><span>Career Suggest</span>
+      </a>
+      <a class="nav-link" href="../disha/path.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg><span>Learning Path</span>
+      </a>
+      <a class="nav-link" href="../disha/dashboard.html">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg><span>Progress</span>
+      </a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="streak-card">
+      <div class="streak-label"><span>Current streak</span>🔥</div>
+      <div class="streak-value" id="streak-val">0 <span>days</span></div>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="page-wrap">
+    <div class="step-label"></div>
+    <h1 class="page-title">Smart <em>Coding Quiz</em></h1>
+    <p class="page-subtitle">Curated MCQs on 5 core DSA topics. Instant feedback. Builds your weakness map automatically.</p>
+
+    <!-- SETUP -->
+    <div id="setup-section">
+      <div class="section-h">Pick Topics</div>
+      <p class="section-sub">Select one or more topics · 5 topics available</p>
+      <div class="topic-selector" id="topic-selector">
+        <button class="topic-btn" data-topic="Arrays">Arrays</button>
+        <button class="topic-btn" data-topic="Strings">Strings</button>
+        <button class="topic-btn" data-topic="Recursion">Recursion</button>
+        <button class="topic-btn" data-topic="Dynamic Programming">Dynamic Programming</button>
+        <button class="topic-btn" data-topic="Time Complexity">Time Complexity</button>
+      </div>
+
+      <div class="section-h">Number of Questions</div>
+      <p class="section-sub" style="margin-bottom:0">Each topic has 10 questions · max depends on selection</p>
+      <div class="row-btns">
+        <button class="row-btn" data-count="5">5 Qs</button>
+        <button class="row-btn selected" data-count="10">10 Qs</button>
+        <button class="row-btn" data-count="15">15 Qs</button>
+        <button class="row-btn" data-count="20">20 Qs</button>
+      </div>
+
+      <div id="setup-error" class="err-msg"></div>
+      <button class="btn btn-marg" style="margin-top:8px" onclick="startQuiz()">Start Quiz →</button>
+    </div>
+
+    <!-- QUIZ ACTIVE -->
+    <div id="quiz-section" style="display:none">
+      <div class="meta-row">
+        <span>question <strong id="q-current" style="color:var(--fg)">1</strong> / <span id="q-total">10</span></span>
+        <span>score <strong id="q-score" style="color:var(--marg)">0</strong></span>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+
+      <div class="q-card" id="q-card">
+        <div class="q-meta" id="q-meta-label"></div>
+        <div class="q-text" id="q-text"></div>
+        <div id="q-code" class="code-q" style="display:none"></div>
+        <div class="opts" id="opts-container"></div>
+        <div class="feedback" id="feedback-box">
+          <span style="font-size:16px">💡</span>
+          <div>
+            <strong id="feedback-verdict"></strong>
+            <p id="feedback-text" style="margin:4px 0 0;color:var(--muted)"></p>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <button class="btn btn-marg" id="next-btn" style="display:none" onclick="nextQuestion()">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results-section" style="display:none">
+      <div class="results-card">
+        <div class="results-score" id="results-score">0/0</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px;font-family:var(--mono)">Quiz Complete! 🎉</div>
+        <div class="results-breakdown" id="results-breakdown"></div>
+        <div id="topic-breakdown" style="margin:20px 0;text-align:left"></div>
+        <div class="btn-row">
+          <button class="btn btn-marg" onclick="retakeQuiz()">Retake Quiz</button>
+          <a class="btn" href="weakness.html">View Weakness Map →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── QUESTION BANK ──────────────────────────────────────────────────────────────
+const QUESTION_BANK = {
+  "Arrays": [
+    {
+      question: "What is the time complexity of accessing an element by index in an array?",
+      code: "",
+      options: ["O(n)", "O(log n)", "O(1)", "O(n²)"],
+      correct: 2,
+      difficulty: "easy",
+      explanation: "Arrays store elements in contiguous memory, so any index can be reached in constant time O(1) with direct address calculation."
+    },
+    {
+      question: "What does this function return for arr = [3, 1, 4, 1, 5, 9, 2, 6]?",
+      code: "def mystery(arr):\n    res = arr[0]\n    for x in arr:\n        if x > res:\n            res = x\n    return res",
+      options: ["3", "9", "6", "1"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "The function iterates through the array tracking the maximum value. 9 is the largest element."
+    },
+    {
+      question: "Which operation is most expensive for a dynamic array (ArrayList) when inserting at the beginning?",
+      code: "",
+      options: ["O(1) amortized", "O(log n)", "O(n)", "O(n²)"],
+      correct: 2,
+      difficulty: "medium",
+      explanation: "Inserting at the beginning requires shifting all existing elements one position to the right — O(n) time."
+    },
+    {
+      question: "What is the output of this code?",
+      code: "arr = [1, 2, 3, 4, 5]\nprint(arr[-2])",
+      options: ["4", "5", "2", "Error"],
+      correct: 0,
+      difficulty: "easy",
+      explanation: "In Python, negative indexing goes from the end. arr[-1] = 5, arr[-2] = 4."
+    },
+    {
+      question: "For finding if a subarray with sum = k exists, which approach gives O(n) time?",
+      code: "",
+      options: ["Brute force (two loops)", "Sorting first", "Prefix sum with hash map", "Binary search"],
+      correct: 2,
+      difficulty: "medium",
+      explanation: "Using a prefix sum and a hash map, we check if (currentSum - k) exists in the map — a single O(n) pass."
+    },
+    {
+      question: "What is the output?",
+      code: "arr = [10, 20, 30, 40, 50]\nprint(arr[1:4])",
+      options: ["[10, 20, 30]", "[20, 30, 40]", "[20, 30, 40, 50]", "[10, 20, 30, 40]"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "Python slicing arr[1:4] returns elements at indices 1, 2, 3 → [20, 30, 40]. The end index is exclusive."
+    },
+    {
+      question: "Which algorithm finds the maximum subarray sum in O(n) time?",
+      code: "",
+      options: ["Merge Sort approach", "Kadane's Algorithm", "Divide and Conquer (O(n log n))", "Greedy with sorting"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "Kadane's Algorithm maintains a running max and resets to 0 when sum drops below 0, achieving O(n) time."
+    },
+    {
+      question: "What is the space complexity of reversing an array in-place?",
+      code: "",
+      options: ["O(n)", "O(log n)", "O(1)", "O(n²)"],
+      correct: 2,
+      difficulty: "easy",
+      explanation: "In-place reversal uses only a single temp variable (two-pointer swap), requiring O(1) extra space."
+    },
+    {
+      question: "What does this two-pointer code count?",
+      code: "def count(arr, target):\n    l, r = 0, len(arr) - 1\n    count = 0\n    while l < r:\n        if arr[l] + arr[r] == target:\n            count += 1\n            l += 1; r -= 1\n        elif arr[l] + arr[r] < target:\n            l += 1\n        else:\n            r -= 1\n    return count",
+      options: ["Count of elements equal to target", "Count of pairs summing to target (sorted array)", "Count of subarrays with sum = target", "Count of inversions"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "This two-pointer approach works on a sorted array and counts distinct pairs (arr[l], arr[r]) that sum to the target."
+    },
+    {
+      question: "Rotating an array of size n by k positions to the right — what is the most space-efficient method?",
+      code: "",
+      options: ["Extra array copy", "One element at a time (O(nk))", "Reverse the whole array, then reverse parts", "Circular linked list conversion"],
+      correct: 2,
+      difficulty: "hard",
+      explanation: "The reversal trick: reverse entire array, reverse first k elements, reverse remaining n-k. O(n) time, O(1) space."
+    }
+  ],
+
+  "Strings": [
+    {
+      question: "What is the time complexity of checking if two strings are anagrams using character count?",
+      code: "",
+      options: ["O(n log n)", "O(n)", "O(n²)", "O(1)"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "Count character frequencies for both strings (O(n) each) and compare counts. Total O(n)."
+    },
+    {
+      question: "What does this function return for s = 'racecar'?",
+      code: "def check(s):\n    return s == s[::-1]",
+      options: ["False", "True", "Error", "'racecar'"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "s[::-1] reverses the string. 'racecar' reversed is 'racecar', so the comparison is True — it's a palindrome."
+    },
+    {
+      question: "Which algorithm finds all occurrences of a pattern in a string in O(n + m) time?",
+      code: "",
+      options: ["Brute force", "Binary Search", "KMP (Knuth-Morris-Pratt)", "Bubble sort based"],
+      correct: 2,
+      difficulty: "hard",
+      explanation: "KMP uses a prefix table (failure function) to avoid redundant comparisons, achieving O(n + m) where n = text length, m = pattern length."
+    },
+    {
+      question: "What is the output?",
+      code: "s = 'Hello World'\nprint(s.lower().split())",
+      options: ["['hello', 'world']", "['Hello', 'World']", "['hello world']", "Error"],
+      correct: 0,
+      difficulty: "easy",
+      explanation: "lower() converts to 'hello world', then split() splits by whitespace → ['hello', 'world']."
+    },
+    {
+      question: "For finding the longest palindromic substring, which approach works in O(n²)?",
+      code: "",
+      options: ["Brute force O(n³)", "Expand around center", "KMP algorithm", "Hashing alone"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "Expand-around-center checks both odd and even length palindromes from each center — O(n) centers × O(n) expansion = O(n²), O(1) space."
+    },
+    {
+      question: "What does 'immutable' mean for strings in Python/Java?",
+      code: "",
+      options: ["Strings can be modified in place", "Once created, a string's contents cannot be changed", "Strings are automatically sorted", "Strings cannot contain numbers"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "In Python and Java, strings are immutable — any operation that 'modifies' a string creates a new string object."
+    },
+    {
+      question: "What is the output of this code?",
+      code: "s = 'abcdef'\nprint(s[::2])",
+      options: ["'ace'", "'bdf'", "'abcdef'", "'fedcba'"],
+      correct: 0,
+      difficulty: "medium",
+      explanation: "s[::2] steps through the string with step=2: index 0='a', 2='c', 4='e' → 'ace'."
+    },
+    {
+      question: "To count the frequency of each character in a string most efficiently, you should use:",
+      code: "",
+      options: ["Nested loops O(n²)", "Sorting O(n log n)", "Hash map / Counter O(n)", "Binary search O(log n)"],
+      correct: 2,
+      difficulty: "easy",
+      explanation: "A hash map (or Python's Counter) counts each character in a single O(n) pass through the string."
+    },
+    {
+      question: "What is the minimum number of operations to convert 'kitten' to 'sitting' (edit distance)?",
+      code: "",
+      options: ["2", "3", "4", "5"],
+      correct: 1,
+      difficulty: "hard",
+      explanation: "Edit distance (Levenshtein) between 'kitten' and 'sitting' is 3: substitute k→s, substitute e→i, insert g."
+    },
+    {
+      question: "Which approach finds the longest common substring of two strings in O(n×m) time?",
+      code: "",
+      options: ["KMP algorithm", "Dynamic Programming with 2D table", "Two pointer approach", "Binary search on length"],
+      correct: 1,
+      difficulty: "hard",
+      explanation: "A 2D DP table where dp[i][j] = length of longest common substring ending at s1[i] and s2[j] gives O(n×m) time and space."
+    }
+  ],
+
+  "Recursion": [
+    {
+      question: "What is the output of this recursive function with n=4?",
+      code: "def f(n):\n    if n == 0:\n        return 0\n    return n + f(n - 1)",
+      options: ["6", "10", "4", "24"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "f(4) = 4 + f(3) = 4 + 3 + f(2) = 4+3+2+f(1) = 4+3+2+1+f(0) = 10. This computes the sum 1+2+...+n."
+    },
+    {
+      question: "What happens if a recursive function has no base case?",
+      code: "",
+      options: ["Returns 0 by default", "Runs infinitely until stack overflow", "Automatically returns None", "Compiles but gives wrong answer"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "Without a base case, the recursion never terminates, causing each call to stack up until a StackOverflow error occurs."
+    },
+    {
+      question: "What does this function compute?",
+      code: "def mystery(n):\n    if n <= 1:\n        return 1\n    return mystery(n-1) + mystery(n-2)",
+      options: ["Power of 2", "Fibonacci number", "Factorial", "Sum 1 to n"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "mystery(n) = mystery(n-1) + mystery(n-2) with base cases mystery(0)=mystery(1)=1. This is the Fibonacci sequence."
+    },
+    {
+      question: "What is the time complexity of the naive recursive Fibonacci?",
+      code: "def fib(n):\n    if n <= 1: return n\n    return fib(n-1) + fib(n-2)",
+      options: ["O(n)", "O(n log n)", "O(2^n)", "O(n²)"],
+      correct: 2,
+      difficulty: "medium",
+      explanation: "Each call branches into 2, creating a binary tree of depth n. Total calls ≈ 2^n, so time complexity is O(2^n)."
+    },
+    {
+      question: "What is the space complexity of a recursive function with depth d and no extra data structures?",
+      code: "",
+      options: ["O(1)", "O(d) — call stack", "O(d²)", "O(2^d)"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "Each recursive call adds a frame to the call stack. At most d frames exist simultaneously, so space complexity is O(d)."
+    },
+    {
+      question: "What is the output of f(5) here?",
+      code: "def f(n):\n    if n == 0:\n        return 1\n    return n * f(n-1)",
+      options: ["120", "25", "15", "5"],
+      correct: 0,
+      difficulty: "easy",
+      explanation: "This is the factorial function. f(5) = 5×4×3×2×1 = 120."
+    },
+    {
+      question: "Tail recursion is better than regular recursion because:",
+      code: "",
+      options: ["It uses more memory", "Compilers can optimize it to use O(1) stack space", "It runs twice as fast always", "It doesn't need a base case"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "When a recursive call is the last operation (tail call), compilers can reuse the current stack frame instead of creating a new one, giving O(1) space."
+    },
+    {
+      question: "How many times is 'Hello' printed?",
+      code: "def f(n):\n    if n <= 0:\n        return\n    print('Hello')\n    f(n - 2)\n    f(n - 2)\n\nf(3)",
+      options: ["2", "3", "4", "6"],
+      correct: 1,
+      difficulty: "hard",
+      explanation: "f(3): print Hello, call f(1) and f(1). f(1): print Hello, call f(-1)×2 (both return). So total = 1 (from f(3)) + 1 (from first f(1)) + 1 (from second f(1)) = 3."
+    },
+    {
+      question: "Which technique converts an exponential recursive solution to polynomial time by caching results?",
+      code: "",
+      options: ["Tail recursion", "Memoization", "Backtracking", "Divide and conquer"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "Memoization stores results of subproblems so they're not recomputed. Fibonacci goes from O(2^n) to O(n) with memoization."
+    },
+    {
+      question: "What is the output of this recursive function?",
+      code: "def f(n):\n    if n == 1:\n        return\n    f(n // 2)\n    print(n % 2, end='')\n\nf(13)",
+      options: ["101", "1101", "110", "011"],
+      correct: 1,
+      difficulty: "hard",
+      explanation: "This prints the binary representation of 13. 13 in binary is 1101. The recursion unwraps: f(13)→f(6)→f(3)→f(1), then prints 1,1,0,1."
+    }
+  ],
+
+  "Dynamic Programming": [
+    {
+      question: "What is the main idea behind Dynamic Programming?",
+      code: "",
+      options: ["Always use recursion", "Break problem into subproblems and reuse solutions", "Sort data first, then solve", "Use extra threads for parallel computation"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "DP solves complex problems by breaking them into overlapping subproblems, solving each once, and storing results to avoid redundant computation."
+    },
+    {
+      question: "What is the time complexity of computing Fibonacci using DP (bottom-up)?",
+      code: "",
+      options: ["O(2^n)", "O(n²)", "O(n)", "O(log n)"],
+      correct: 2,
+      difficulty: "easy",
+      explanation: "Bottom-up DP computes each Fibonacci number once from fib[0] to fib[n], storing in an array — O(n) time and O(n) space (or O(1) with optimization)."
+    },
+    {
+      question: "For the 0/1 Knapsack problem with n items and capacity W, what is the DP time complexity?",
+      code: "",
+      options: ["O(n + W)", "O(n × W)", "O(n²)", "O(2^n)"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "The DP table has n rows × W+1 columns, and each cell is filled in O(1). Total: O(n × W)."
+    },
+    {
+      question: "What is the value of dp[4] in this Coin Change DP (coins=[1,2,5], amount=4)?",
+      code: "dp = [inf] * (amount + 1)\ndp[0] = 0\nfor coin in coins:\n    for x in range(coin, amount+1):\n        dp[x] = min(dp[x], dp[x-coin]+1)",
+      options: ["1", "2", "4", "3"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "Minimum coins for 4: dp[4] = dp[2]+1 = 2 (using coin 2 twice). Result is 2."
+    },
+    {
+      question: "The Longest Common Subsequence (LCS) of 'ABCBDAB' and 'BDCAB' has what length?",
+      code: "",
+      options: ["3", "4", "5", "2"],
+      correct: 1,
+      difficulty: "hard",
+      explanation: "LCS of 'ABCBDAB' and 'BDCAB' is 'BCAB' or 'BDAB', length 4."
+    },
+    {
+      question: "What distinguishes 'memoization' from 'tabulation' in DP?",
+      code: "",
+      options: ["Memoization is bottom-up; tabulation is top-down", "Memoization is top-down recursion with caching; tabulation is bottom-up iteration", "They are identical approaches", "Memoization works only on strings"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "Memoization = top-down: recursively solve and cache subproblems. Tabulation = bottom-up: fill table iteratively from smallest subproblems."
+    },
+    {
+      question: "Which problem CANNOT be solved efficiently with DP?",
+      code: "",
+      options: ["Longest Increasing Subsequence", "Shortest path in DAG", "Travelling Salesman (exact, polynomial)", "Edit Distance"],
+      correct: 2,
+      difficulty: "hard",
+      explanation: "TSP has no known polynomial DP solution. DP gives O(2^n × n) which is still exponential — it just prunes the brute-force exponential."
+    },
+    {
+      question: "What does this DP compute for nums=[10,9,2,5,3,7,101,18]?",
+      code: "def lis(nums):\n    dp = [1] * len(nums)\n    for i in range(1, len(nums)):\n        for j in range(i):\n            if nums[j] < nums[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp)",
+      options: ["Maximum subarray sum", "Length of longest increasing subsequence", "Number of inversions", "Minimum path sum"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "This is the O(n²) DP for Longest Increasing Subsequence. For [10,9,2,5,3,7,101,18], LIS = 4 (e.g. 2,3,7,101)."
+    },
+    {
+      question: "Two conditions required for DP to be applicable are:",
+      code: "",
+      options: ["Sorting + Greedy choice", "Optimal substructure + Overlapping subproblems", "Recursion + Backtracking", "Divide and conquer + Linear scan"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "DP requires: (1) Optimal substructure — optimal solution contains optimal solutions to subproblems, and (2) Overlapping subproblems — same subproblems recur."
+    },
+    {
+      question: "Space-optimized DP for Fibonacci needs only how many variables?",
+      code: "",
+      options: ["n variables", "3 variables", "2 variables", "log n variables"],
+      correct: 2,
+      difficulty: "easy",
+      explanation: "fib(n) only depends on fib(n-1) and fib(n-2), so we only need two variables: prev and curr — O(1) space."
+    }
+  ],
+
+  "Time Complexity": [
+    {
+      question: "What is the time complexity of binary search on a sorted array of n elements?",
+      code: "",
+      options: ["O(n)", "O(n²)", "O(log n)", "O(1)"],
+      correct: 2,
+      difficulty: "easy",
+      explanation: "Binary search halves the search space each step. After k steps, n/2^k = 1, so k = log₂(n). Time complexity: O(log n)."
+    },
+    {
+      question: "What is the time complexity of this code?",
+      code: "for i in range(n):\n    for j in range(n):\n        print(i, j)",
+      options: ["O(n)", "O(n log n)", "O(n²)", "O(2^n)"],
+      correct: 2,
+      difficulty: "easy",
+      explanation: "Two nested loops each running n times → n × n = n² total iterations. Time complexity: O(n²)."
+    },
+    {
+      question: "Which sorting algorithm has the best average-case time complexity?",
+      code: "",
+      options: ["Bubble Sort — O(n²)", "Merge Sort — O(n log n)", "Selection Sort — O(n²)", "Insertion Sort — O(n²)"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "Merge Sort consistently runs in O(n log n) for all cases (best, average, worst). QuickSort is O(n log n) average but O(n²) worst case."
+    },
+    {
+      question: "What is the time complexity of this function?",
+      code: "def f(n):\n    i = 1\n    while i < n:\n        i *= 2",
+      options: ["O(n)", "O(n²)", "O(log n)", "O(n log n)"],
+      correct: 2,
+      difficulty: "medium",
+      explanation: "i doubles each iteration: 1, 2, 4, 8, ... After k iterations i = 2^k. Loop stops when 2^k ≥ n, so k = log₂(n). Time: O(log n)."
+    },
+    {
+      question: "O(1) space complexity means:",
+      code: "",
+      options: ["The algorithm uses 1 byte of memory", "Memory usage doesn't grow with input size", "The algorithm runs in 1 second", "Only 1 variable is allowed"],
+      correct: 1,
+      difficulty: "easy",
+      explanation: "O(1) space means constant space — the extra memory used doesn't grow as input size n increases. The number of fixed variables doesn't matter."
+    },
+    {
+      question: "What is the time complexity of inserting into a hash table (average case)?",
+      code: "",
+      options: ["O(n)", "O(log n)", "O(1)", "O(n²)"],
+      correct: 2,
+      difficulty: "easy",
+      explanation: "Hash tables compute the hash (O(1)) and insert at that bucket (O(1)) on average, assuming a good hash function with minimal collisions."
+    },
+    {
+      question: "What is the time complexity of this code?",
+      code: "def f(n):\n    if n <= 1:\n        return\n    f(n // 2)\n    f(n // 2)\n    for i in range(n):\n        pass",
+      options: ["O(n log n)", "O(n)", "O(n²)", "O(2^n)"],
+      correct: 0,
+      difficulty: "hard",
+      explanation: "This fits the Master Theorem: T(n) = 2T(n/2) + O(n). Case 2: a=2, b=2, f(n)=n → T(n) = O(n log n)."
+    },
+    {
+      question: "Amortized O(1) for dynamic array append means:",
+      code: "",
+      options: ["Every single append is exactly O(1)", "On average across many operations, each append costs O(1) time", "Append is never slow", "Array never needs resizing"],
+      correct: 1,
+      difficulty: "medium",
+      explanation: "Occasional resizing takes O(n) but happens rarely. Spreading this cost across all n appends gives O(1) amortized — total cost for n appends is O(n)."
+    },
+    {
+      question: "What is the worst-case time complexity of QuickSort?",
+      code: "",
+      options: ["O(n log n)", "O(n)", "O(n²)", "O(log n)"],
+      correct: 2,
+      difficulty: "medium",
+      explanation: "QuickSort's worst case occurs when the pivot is always the min or max (already sorted array with bad pivot choice). This gives O(n²) comparisons."
+    },
+    {
+      question: "If an algorithm's runtime doubles every time n increases by 1, its complexity is:",
+      code: "",
+      options: ["O(n)", "O(n²)", "O(2^n)", "O(log n)"],
+      correct: 2,
+      difficulty: "medium",
+      explanation: "If T(n) = 2×T(n-1), then T(n) grows as 2^n. This is exponential — typical of brute-force recursive solutions without memoization."
+    }
+  ]
+};
+
+// ── STREAK ──────────────────────────────────────────────────────────────────
+(function(){
+  const today=new Date().toDateString();
+  let d=JSON.parse(localStorage.getItem('aarambh_streak')||'{"streak":0,"last":""}');
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  if(d.last===today){}
+  else if(d.last===yesterday){d.streak++;d.last=today;}
+  else{d.streak=1;d.last=today;}
+  localStorage.setItem('aarambh_streak',JSON.stringify(d));
+  document.getElementById('streak-val').innerHTML=d.streak+' <span>days</span>';
+})();
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let selectedTopics=[],questionCount=10;
+let quizQuestions=[],currentQ=0,score=0,answered=false,topicResults={};
+
+// Topic buttons
+document.querySelectorAll('.topic-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    btn.classList.toggle('selected');
+    const t=btn.dataset.topic;
+    if(btn.classList.contains('selected')) selectedTopics.push(t);
+    else selectedTopics=selectedTopics.filter(x=>x!==t);
+  });
+});
+
+// Count buttons
+document.querySelectorAll('.row-btn[data-count]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.row-btn[data-count]').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    questionCount=parseInt(btn.dataset.count);
+  });
+});
+
+function shuffleArray(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function buildQuiz(){
+  // Gather questions from selected topics, shuffle each topic pool, interleave
+  const pools={};
+  for(const t of selectedTopics){
+    pools[t]=shuffleArray(QUESTION_BANK[t]);
+  }
+  const result=[];
+  let idx=0;
+  while(result.length<questionCount){
+    const topic=selectedTopics[idx%selectedTopics.length];
+    const pool=pools[topic];
+    const qIdx=Math.floor(result.filter(q=>q.topic===topic).length);
+    if(qIdx<pool.length){
+      result.push({...pool[qIdx],topic});
+    }
+    idx++;
+    // Safety: if we've gone through all topics and still not enough questions, break
+    if(idx>questionCount*selectedTopics.length+100) break;
+  }
+  return result.slice(0,questionCount);
+}
+
+function startQuiz(){
+  const err=document.getElementById('setup-error');
+  if(selectedTopics.length===0){err.textContent='⚠ Please select at least one topic.';return;}
+  // Check available questions
+  const totalAvailable=selectedTopics.reduce((sum,t)=>sum+(QUESTION_BANK[t]||[]).length,0);
+  if(totalAvailable<questionCount){
+    err.textContent=`⚠ Only ${totalAvailable} questions available for selected topics. Choose fewer questions or add more topics.`;
+    return;
+  }
+  err.textContent='';
+  quizQuestions=buildQuiz();
+  currentQ=0;score=0;topicResults={};
+  document.getElementById('setup-section').style.display='none';
+  document.getElementById('quiz-section').style.display='block';
+  document.getElementById('q-total').textContent=quizQuestions.length;
+  updateMeta();
+  renderQuestion(quizQuestions[0]);
+}
+
+function renderQuestion(q){
+  answered=false;
+  document.getElementById('q-text').textContent=q.question;
+  document.getElementById('q-meta-label').textContent=q.topic+' · '+q.difficulty;
+  const codeEl=document.getElementById('q-code');
+  if(q.code&&q.code.trim()){codeEl.textContent=q.code.trim();codeEl.style.display='block';}
+  else codeEl.style.display='none';
+  document.getElementById('feedback-box').className='feedback';
+  document.getElementById('next-btn').style.display='none';
+  const container=document.getElementById('opts-container');
+  container.innerHTML='';
+  ['A','B','C','D'].forEach((lbl,i)=>{
+    if(q.options[i]===undefined) return;
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML=`<span class="badge">${lbl}</span><span>${q.options[i]}</span>`;
+    btn.addEventListener('click',()=>handleAnswer(i,q));
+    container.appendChild(btn);
+  });
+  updateProgress();
+}
+
+function handleAnswer(chosen,q){
+  if(answered) return;
+  answered=true;
+  const opts=document.querySelectorAll('.opt');
+  opts.forEach(o=>o.disabled=true);
+  const correct=chosen===q.correct;
+  opts[chosen].classList.add(correct?'correct':'wrong');
+  if(!correct) opts[q.correct].classList.add('correct');
+  if(!topicResults[q.topic]) topicResults[q.topic]={correct:0,total:0};
+  topicResults[q.topic].total++;
+  if(correct){score++;topicResults[q.topic].correct++;}
+  const fb=document.getElementById('feedback-box');
+  fb.classList.add('show',correct?'correct-fb':'wrong-fb');
+  document.getElementById('feedback-verdict').textContent=correct?'Correct! 🎉':'Not quite.';
+  document.getElementById('feedback-text').textContent=q.explanation;
+  document.getElementById('q-score').textContent=score;
+  document.getElementById('next-btn').style.display='inline-flex';
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=quizQuestions.length){showResults();return;}
+  updateMeta();
+  renderQuestion(quizQuestions[currentQ]);
+}
+
+function updateMeta(){document.getElementById('q-current').textContent=currentQ+1;}
+function updateProgress(){document.getElementById('progress-bar').style.width=((currentQ/quizQuestions.length)*100)+'%';}
+
+function showResults(){
+  document.getElementById('quiz-section').style.display='none';
+  document.getElementById('results-section').style.display='block';
+  document.getElementById('results-score').textContent=score+'/'+quizQuestions.length;
+  const pct=Math.round((score/quizQuestions.length)*100);
+  document.getElementById('results-breakdown').innerHTML=`
+    <div class="rb-item"><div class="rb-val" style="color:var(--green)">${score}</div><div class="rb-lbl">Correct</div></div>
+    <div class="rb-item"><div class="rb-val" style="color:var(--red)">${quizQuestions.length-score}</div><div class="rb-lbl">Wrong</div></div>
+    <div class="rb-item"><div class="rb-val" style="color:var(--marg)">${pct}%</div><div class="rb-lbl">Accuracy</div></div>`;
+  let html='<h3 style="font-family:var(--serif);font-weight:500;margin-bottom:12px">Topic Breakdown</h3>';
+  for(const [topic,res] of Object.entries(topicResults)){
+    const acc=Math.round((res.correct/res.total)*100);
+    const color=acc>=70?'var(--green)':acc>=50?'var(--amber)':'var(--red)';
+    html+=`<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <span style="font-weight:500">${topic}</span>
+        <span style="color:${color};font-weight:600;font-family:var(--mono)">${res.correct}/${res.total} (${acc}%)</span>
+      </div>
+      <div style="height:5px;background:var(--border);border-radius:3px">
+        <div style="height:100%;width:${acc}%;background:${color};border-radius:3px;transition:width .5s .1s"></div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('topic-breakdown').innerHTML=html;
+  saveResults();
+}
+
+function saveResults(){
+  const existing=JSON.parse(localStorage.getItem('aarambh_quiz_history')||'{}');
+  for(const [topic,res] of Object.entries(topicResults)){
+    if(!existing[topic]) existing[topic]={correct:0,total:0};
+    existing[topic].correct+=res.correct;
+    existing[topic].total+=res.total;
+  }
+  localStorage.setItem('aarambh_quiz_history',JSON.stringify(existing));
+}
+
+function retakeQuiz(){
+  document.getElementById('results-section').style.display='none';
+  document.getElementById('quiz-section').style.display='none';
+  document.getElementById('setup-section').style.display='block';
+  quizQuestions=[];currentQ=0;score=0;topicResults={};
+}
+</script>
+</body>
+</html>
